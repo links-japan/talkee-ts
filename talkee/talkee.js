@@ -25,6 +25,7 @@ const defaultLocales = {
     'next_page': 'Next',
     'no_comment_hint': 'No comment yet.',
     'expand_button': 'View all comments',
+    'error_comment_too_frequently': 'Comment too frequently',
   },
   'zh': {
     'tap_to_login': '点击登录发评论',
@@ -39,6 +40,7 @@ const defaultLocales = {
     'next_page': '下一页',
     'no_comment_hint': '没有评论',
     'expand_button': '查看所有评论',
+    'error_comment_too_frequently': '评论过于频繁，请稍后再试',
   },
   'ja': {
     'tap_to_login': 'ログインしてコメントする',
@@ -53,6 +55,7 @@ const defaultLocales = {
     'next_page': '次へ',
     'no_comment_hint': 'この記事にはまだコメントがありません。',
     'expand_button': 'もっと見る',
+    'error_comment_too_frequently': '間隔をあけて投稿してください。',
   }
 }
 
@@ -293,8 +296,12 @@ const Talkee = function (opts) {
           data: { slug: this.slug, content: text }
         });
       } catch (e) {
+        if (e.response && e.response.status === 400) {
+          alert($t('error_comment_too_frequently'))
+          return
+        }
+        // console.log('err', JSON.stringify(e.response))
         Talkee.removeAuth();
-        myComments.pop()
       }
       if (myComment) {
         area.value = '';
@@ -825,8 +832,8 @@ Talkee.setAuth = function (data) {
 };
 
 Talkee.removeAuth = function () {
-  localStorage.deleteItem("talkee-jwt-token")
-  localStorage.deleteItem("talkee-user-id")
+  localStorage.removeItem("talkee-jwt-token")
+  localStorage.removeItem("talkee-user-id")
 };
 
 Talkee.getRedirect = function () {
@@ -840,7 +847,7 @@ Talkee.setRedirect = function () {
 };
 
 Talkee.clearRedirect = function () {
-  return localStorage.deleteItem("talkee-redirect-url")
+  return localStorage.removeItem("talkee-redirect-url")
 };
 
 Talkee.formatTime = function (timeStr) {
