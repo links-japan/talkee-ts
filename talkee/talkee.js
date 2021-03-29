@@ -282,8 +282,8 @@ const Talkee = function (opts) {
   }
 
   this.sendComment = async function () {
-    var area = this.commentsContainer.querySelector('.textarea')
-    var text = area.value.trim()
+    const area = this.commentsContainer.querySelector('.textarea')
+    const text = area.value.trim()
     if (text.length !== 0) {
       let myComment = null
       try {
@@ -297,6 +297,7 @@ const Talkee = function (opts) {
         myComments.pop()
       }
       if (myComment) {
+        area.value = '';
         const container = this.commentsContainer.querySelector('.talkee-comments');
         myComment.creator = this.profile;
         this.prependComments(container, [myComment])
