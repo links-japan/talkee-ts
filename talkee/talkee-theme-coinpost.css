@@ -1,0 +1,70 @@
+.talkee .talkee-editor {
+  border: none;
+}
+
+.talkee .talkee-editor-area {
+  font-size: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+.talkee .talkee-editor-area:focus {
+  border-bottom: 1px solid #333;
+}
+
+.talkee .talkee-editor-ctrl {
+  padding-right: 0;
+}
+
+.talkee .talkee-sort-button {
+  margin-bottom: 0 !important;
+}
+
+.talkee .talkee-meta-tweet-button,
+.talkee .talkee-meta-like-button {
+  margin: 0 !important;
+  line-height: 0 !important;
+  font-size: 13px !important;
+}
+
+.talkee .talkee-editor-submit {
+  background: #5a97a6;
+  display: flex;
+  border-radius: 6px;
+}
+
+.talkee .talkee-comment {
+  background-image: none;
+}
+
+.talkee .talkee-comment-right {
+  padding: 0;
+  font-size: 16px;
+}
+
+.talkee .talkee-comment-content {
+  padding: 0;
+}
+
+.talkee .talkee-comment-meta {
+  margin-top: 12px;
+}
+
+.talkee .talkee-comment-right-top {
+  padding: 0;
+  font-size: 13px;
+  height: 24px;
+}
+
+.talkee .talkee-comment-avatar {
+  margin: 0;
+}
+
+.talkee .talkee-tap-to-login {
+  color: #5a97a6;
+  text-decoration: none;
+  font-weight: bold;
+}

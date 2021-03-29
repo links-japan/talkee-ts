@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="./talkee/talkee.css"></link>
+  <link rel="stylesheet" href="./talkee/talkee-theme-coinpost.css"></link>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="./talkee/talkee.js"></script>
+
+  <style>
+    html, body {
+      font-family: "Hiragino Kaku Gothic Pro", "Hiragino", Arial, Helvetica, sans-serif;
+    }
+  </style>
+</head>
+<body onload="loaded()">
+  <div style="margin: 0 auto; max-width: 800px;">
+    <p style="padding: 20px; line-height: 1.5;">
+      Please append post slug in the url, e.g. by default, in the url<br/>
+      <code>http://localhost:8084/?p=<em>1234</em></code>,</br>
+      the slug is 1234.
+      <br/>
+      current query: <span class="current-query"></span>
+    </p>
+
+
+    <div id="comments"></div>
+    <div class="">
+    </div>
+  </div>
+
+  <script>
+
+    function loaded() {
+      const query = Talkee.getUrlQuery()
+      document.querySelector('.current-query').innerText = JSON.stringify(query);
+
+      const slug = query.p;
+
+      new Talkee({
+        // required
+        siteId: 1,                   // site id. 1 is debug env
+        slug: slug,                   // post slug. the unique id to identify posts
+        commentSelector: '#comments', // selector for comments. should be a string or a dom object
+
+        // optional
+        expandable: true,                        //
+        tweetTags: ['#LINKS', '#リンケス'],       // tweet tags
+        // identitySelector: '#links-login',     // selector for identity.
+        // apiBase: apiBase,                     // alternative apiBase.
+        // loginUrl: loginUrl,                   // alternative login url.
+      })
+    }
+  </script>
+</body>
+</html>
