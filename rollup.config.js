@@ -7,10 +7,11 @@ const json = require('@rollup/plugin-json');
 const postcss = require('rollup-plugin-postcss');
 const pkj = require(path.resolve(__dirname, './package.json'));
 const replace = require('@rollup/plugin-replace');
+const image = require('@rollup/plugin-image');
 
 module.exports = function (config) {
   // umd
-  const extensions = ['.ts', '.js'];
+  const extensions = ['.ts', '.js', '.png', '.svg'];
   config.push({
     input: 'src/index.ts',
     output: {
@@ -38,13 +39,14 @@ module.exports = function (config) {
         babelHelpers: 'runtime',
         extensions
       }),
-      json()
+      json(),
     ]
   });
 
   config.forEach(v => {
     v.plugins.push(
-      postcss()
+      postcss(),
+      image()
     );
   });
 

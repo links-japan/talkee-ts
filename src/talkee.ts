@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Base64 from './base64';
+import icons from "./icons/index";
 
 // constants
 // @TODO refactor
@@ -293,6 +294,7 @@ export const Talkee = function (opts: Record<string, any>) {
         className: `talkee-comment-reward`
       });
       const commentRewardIcon = Talkee.$e('span', { className: 'talkee-comment-reward-icon' });
+      commentRewardIcon.style.backgroundImage = 'url("' + icons.badgeIcon + '")';
       const commentRewardText = Talkee.$e('span', {
         className: 'talkee-comment-reward-text',
         innerText: `${comment.reward.amount} Satoshi`
@@ -324,6 +326,7 @@ export const Talkee = function (opts: Record<string, any>) {
       className: 'talkee-button talkee-meta-tweet-button',
       innerText: '',
     })
+    tweetButton.style.backgroundImage = 'url("' + icons.tweetIcon + '")';
     tweetButton.addEventListener('click', function () {
       const commentURL = new URL(window.location.href)
       commentURL.hash = '#talkee-anchor-comment-' + comment.id
@@ -344,6 +347,11 @@ export const Talkee = function (opts: Record<string, any>) {
       className: `talkee-button talkee-meta-like-button ${comment["favored"] ? 'favored' : ''}`,
       innerText: $t('like'),
     })
+    if (comment["favored"]) {
+      favButton.style.backgroundImage = 'url("' + icons.likedIcon + '")';
+    } else {
+      favButton.style.backgroundImage = 'url("' + icons.likeIcon + '")';
+    }
     favButton.addEventListener('click', function () {
       if (!self.isSigned) {
         const loginUrl = self.buildLoginURL();
@@ -466,6 +474,7 @@ export const Talkee = function (opts: Record<string, any>) {
     const sortBar = Talkee.$e('div', { className: 'talkee-sort-bar' })
     const sortBarLeft = Talkee.$e('div', { className: 'talkee-sort-bar-left' })
     const sortBarCommentIcon = Talkee.$e('span', { className: 'talkee-sort-bar-comment-icon' })
+    sortBarCommentIcon.style.backgroundImage = 'url("' + icons.commentIcon + '")';
     const sortBarCommentCount = Talkee.$e('span', {
       className: 'talkee-sort-bar-comment-count',
       innerText: self.total,
@@ -477,6 +486,7 @@ export const Talkee = function (opts: Record<string, any>) {
 
     const sortBarRight = Talkee.$e('div', { className: 'talkee-sort-bar-right' })
     const sortIcon = Talkee.$e('span', { className: 'talkee-sort-icon' })
+    sortIcon.style.backgroundImage = 'url("' + icons.sortIcon + '")';
     const sortPrefix = Talkee.$e('span', { className: 'talkee-sort-prefix', innerText: "" })
     sortBarRight.appendChild(sortIcon)
     sortBarRight.appendChild(sortPrefix)
@@ -678,13 +688,31 @@ Talkee.$e = function (tag: string, opts: Record<string, any>) {
 }
 
 Talkee.getUrlQuery = function () {
-  const url = new URL(window.location.href)
+  const search = window.location.search.slice(1);
+  const segs = search.split('&')
   const ret: Record<string, any> = {}
-  for(var pair of (url.searchParams as any).entries()) {
-    ret[pair[0]] = pair[1]
+  const pairs = segs.map((x) => {
+    const r = x.split('=');
+    if (r.length === 1) {
+      r.push('');
+    }
+    return r;
+  })
+  for (let ix = 0; ix < pairs.length; ix++) {
+    const p = pairs[ix];
+    ret[p[0]] = p[1];
   }
   return ret
 };
+
+// Talkee.getUrlQuery = function () {
+//   const url = new URL(window.location.href)
+//   const ret: Record<string, any> = {}
+//   for(var pair of (url.searchParams as any).entries()) {
+//     ret[pair[0]] = pair[1]
+//   }
+//   return ret
+// };
 
 Talkee.getToken = function () {
   return localStorage.getItem("talkee-jwt-token")

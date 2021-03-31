@@ -208,6 +208,9 @@
   height: 24px;
   display: inline-block;
   min-width: 24px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-color: transparent;
 }
 
 .talkee .talkee-meta-like-button-wrapper {
@@ -216,11 +219,6 @@
 
 .talkee .talkee-meta-like-button {
   padding-left: 24px;
-  background: transparent url(./like.svg) 0 0 no-repeat;
-}
-
-.talkee .talkee-meta-tweet-button {
-  background: transparent url(./tweet.svg) 0 0 no-repeat;
 }
 
 .talkee .talkee-meta-like-button {
@@ -229,7 +227,6 @@
 
 .talkee .talkee-meta-like-button.favored {
   opacity: 1;
-  background: transparent url(./liked.svg) 0 0 no-repeat;
   color: #5a97a6;
 }
 
