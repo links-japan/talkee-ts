@@ -52,7 +52,7 @@ module.exports = {
     npm: 'https://registry.npmjs.org/', 
 
     preflight: {
-      branch: 'refactor/engineering' // 发布前进行分支检测，设置为空字符串则不会检测 (only can release in this branch, set empty string to ignore this check)
+      branch: 'master' // 发布前进行分支检测，设置为空字符串则不会检测 (only can release in this branch, set empty string to ignore this check)
     }
   },
 
