@@ -13,6 +13,8 @@ node_modules
 dist
 dist.zip
 
+index.html
+
 # config files
 .eslintignore
 .eslintrc.js
