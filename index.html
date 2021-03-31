@@ -6,11 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Demo</title>
 
-  <link rel="stylesheet" href="./talkee/talkee.css"></link>
-  <link rel="stylesheet" href="./talkee/talkee-theme-coinpost.css"></link>
+  <link rel="stylesheet" href="./src/talkee-theme-coinpost.css"></link>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="./talkee/talkee.js"></script>
+  <script src="./umd/talkee.min.0-0-1.js"></script>
 
   <style>
     html, body {
@@ -35,7 +34,6 @@
   </div>
 
   <script>
-
     function loaded() {
       const query = Talkee.getUrlQuery()
       document.querySelector('.current-query').innerText = JSON.stringify(query);
