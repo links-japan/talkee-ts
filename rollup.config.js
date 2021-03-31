@@ -6,6 +6,7 @@ const { babel } = require('@rollup/plugin-babel');
 const json = require('@rollup/plugin-json');
 const postcss = require('rollup-plugin-postcss');
 const pkj = require(path.resolve(__dirname, './package.json'));
+const replace = require('@rollup/plugin-replace');
 
 module.exports = function (config) {
   // umd
@@ -42,7 +43,9 @@ module.exports = function (config) {
   });
 
   config.forEach(v => {
-    v.plugins.push(postcss());
+    v.plugins.push(
+      postcss()
+    );
   });
 
   return config;
