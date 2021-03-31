@@ -1,4 +1,5 @@
-
+import axios from 'axios';
+import Base64 from './base64';
 
 // constants
 // @TODO refactor
@@ -64,138 +65,13 @@ const getCurrentLocale = function () {
   return lang.slice(0, 2)
 }
 
-const $t = function (key) {
-  const locale = getCurrentLocale()
+const $t = function (key: keyof typeof defaultLocales['en']) {
+  const locale = getCurrentLocale() as keyof typeof defaultLocales;
   return defaultLocales[locale][key] || key
 }
 
-const Base64 = {
-  // private property
-  _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-
-  // public method for encoding
-  encode(input) {
-    let output = "";
-    let chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-    let i = 0;
-
-    input = Base64._utf8_encode(input);
-
-    while (i < input.length) {
-      chr1 = input.charCodeAt(i++);
-      chr2 = input.charCodeAt(i++);
-      chr3 = input.charCodeAt(i++);
-
-      enc1 = chr1 >> 2;
-      enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-      enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-      enc4 = chr3 & 63;
-
-      if (isNaN(chr2)) {
-        enc3 = enc4 = 64;
-      } else if (isNaN(chr3)) {
-        enc4 = 64;
-      }
-
-      output =
-        output +
-        this._keyStr.charAt(enc1) +
-        this._keyStr.charAt(enc2) +
-        this._keyStr.charAt(enc3) +
-        this._keyStr.charAt(enc4);
-    } // Whend
-
-    return output;
-  }, // End Function encode
-
-  // public method for decoding
-  decode(input) {
-    let output = "";
-    let chr1, chr2, chr3;
-    let enc1, enc2, enc3, enc4;
-    let i = 0;
-
-    input = input.replace(/[^A-Za-z0-9+/=]/g, "");
-    while (i < input.length) {
-      enc1 = this._keyStr.indexOf(input.charAt(i++));
-      enc2 = this._keyStr.indexOf(input.charAt(i++));
-      enc3 = this._keyStr.indexOf(input.charAt(i++));
-      enc4 = this._keyStr.indexOf(input.charAt(i++));
-
-      chr1 = (enc1 << 2) | (enc2 >> 4);
-      chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-      chr3 = ((enc3 & 3) << 6) | enc4;
-
-      output = output + String.fromCharCode(chr1);
-
-      if (enc3 !== 64) {
-        output = output + String.fromCharCode(chr2);
-      }
-
-      if (enc4 !== 64) {
-        output = output + String.fromCharCode(chr3);
-      }
-    } // Whend
-
-    output = Base64._utf8_decode(output);
-
-    return output;
-  }, // End Function decode
-
-  // private method for UTF-8 encoding
-  _utf8_encode(string) {
-    let utftext = "";
-    string = string.replace(/\r\n/g, "\n");
-
-    for (let n = 0; n < string.length; n++) {
-      const c = string.charCodeAt(n);
-
-      if (c < 128) {
-        utftext += String.fromCharCode(c);
-      } else if (c > 127 && c < 2048) {
-        utftext += String.fromCharCode((c >> 6) | 192);
-        utftext += String.fromCharCode((c & 63) | 128);
-      } else {
-        utftext += String.fromCharCode((c >> 12) | 224);
-        utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-        utftext += String.fromCharCode((c & 63) | 128);
-      }
-    } // Next n
-    return utftext;
-  }, // End Function _utf8_encode
-
-  // private method for UTF-8 decoding
-  _utf8_decode(utftext) {
-    let string = "";
-    let i = 0;
-    let c, c2, c3;
-    c = c2 = 0;
-
-    while (i < utftext.length) {
-      c = utftext.charCodeAt(i);
-
-      if (c < 128) {
-        string += String.fromCharCode(c);
-        i++;
-      } else if (c > 191 && c < 224) {
-        c2 = utftext.charCodeAt(i + 1);
-        string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-        i += 2;
-      } else {
-        c2 = utftext.charCodeAt(i + 1);
-        c3 = utftext.charCodeAt(i + 2);
-        string += String.fromCharCode(
-          ((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63),
-        );
-        i += 3;
-      }
-    } // Whend
-    return string;
-  }, // End Function _utf8_decode
-};
-
 // Talkee contructor
-const Talkee = function (opts) {
+export const Talkee = function (opts: Record<string, any>) {
   this.editorArea = null;
   this.repliedCommentId = null;
   this.repliedUserId = null;
@@ -223,7 +99,7 @@ const Talkee = function (opts) {
     if (opts.params) {
       params = Object.assign(params, opts.params)
     }
-    let resp = null;
+    let resp: any = null;
     try {
       resp = await axios({
         method: opts.method || 'get',
@@ -238,7 +114,7 @@ const Talkee = function (opts) {
         reject(e);
       })
     }
-    if (resp.data && resp.data.token) {
+    if (resp?.data?.token) {
       Talkee.setAuth(resp.data)
     }
     return new Promise(function (resolve, reject) {
@@ -264,7 +140,7 @@ const Talkee = function (opts) {
       console.log('failed to auth', e)
     }
     if (Talkee.getRedirect()) {
-      window.location.replace(Talkee.getRedirect())
+      window.location.replace(Talkee.getRedirect() ?? '')
       return
     }
   }
@@ -288,7 +164,7 @@ const Talkee = function (opts) {
     const area = this.commentsContainer.querySelector('.textarea')
     const text = area.value.trim()
     if (text.length !== 0) {
-      let myComment = null
+      let myComment: any = null
       try {
         myComment = await this.request({
           method: 'POST',
@@ -432,7 +308,7 @@ const Talkee = function (opts) {
 
     // content
     const commentContent = Talkee.$e('div', { className: 'talkee-comment-content' })
-    const commentText = Talkee.parseText(comment.content)
+    let commentText = Talkee.parseText(comment.content)
     if (comment.recipient) {
       commentText =
         '<a href="#comment-' + comment.recipient.id + '" class="link">@' + comment.recipient.name + '</a> '
@@ -601,7 +477,7 @@ const Talkee = function (opts) {
 
     const sortBarRight = Talkee.$e('div', { className: 'talkee-sort-bar-right' })
     const sortIcon = Talkee.$e('span', { className: 'talkee-sort-icon' })
-    const sortPrefix = Talkee.$e('span', { className: 'talkee-sort-prefix', innerText: $t('sort_by') })
+    const sortPrefix = Talkee.$e('span', { className: 'talkee-sort-prefix', innerText: "" })
     sortBarRight.appendChild(sortIcon)
     sortBarRight.appendChild(sortPrefix)
 
@@ -664,7 +540,7 @@ const Talkee = function (opts) {
       const btn = Talkee.$e('button', {
         className: `talkee-button talkee-pagination-button talkee-pagination-${ix + 1}-button`,
         innerText: (ix + 1),
-      })
+      }) as HTMLButtonElement
       if (this.page === ix + 1) {
         btn.disabled = true
       }
@@ -767,7 +643,7 @@ const Talkee = function (opts) {
     if (window.location.hash && window.location.hash.indexOf('#talkee-anchor') === 0) {
       setTimeout(() => {
         const m = /comment-(\d+)/.exec("#talkee-anchor-comment-15")
-        if (m.length > 1) {
+        if (m && m.length > 1) {
           const anchor = this.commentsContainer.querySelector(`#talkee-comment-${m[1]}`)
           if (anchor) {
             anchor.scrollIntoView(false)
@@ -790,12 +666,12 @@ const Talkee = function (opts) {
 }
 
 // class methods
-Talkee.$e = function (tag, opts) {
+Talkee.$e = function (tag: string, opts: Record<string, any>) {
   const el = document.createElement(tag);
   for (const key in opts) {
     if (Object.hasOwnProperty.call(opts, key)) {
       const val = opts[key];
-      el[key] = val;
+      (el as any)[key] = val;
     }
   }
   return el;
@@ -803,8 +679,8 @@ Talkee.$e = function (tag, opts) {
 
 Talkee.getUrlQuery = function () {
   const url = new URL(window.location.href)
-  const ret = {}
-  for(var pair of url.searchParams.entries()) {
+  const ret: Record<string, any> = {}
+  for(var pair of (url.searchParams as any).entries()) {
     ret[pair[0]] = pair[1]
   }
   return ret
@@ -814,19 +690,19 @@ Talkee.getToken = function () {
   return localStorage.getItem("talkee-jwt-token")
 };
 
-Talkee.setProfile = function (me) {
+Talkee.setProfile = function (me: Record<string, any>) {
   localStorage.setItem("talkee-profile", JSON.stringify(me))
 };
 
 Talkee.getProfile = function () {
   try {
-    return JSON.parse(localStorage.getItem("talkee-profile"))
+    return JSON.parse(localStorage.getItem("talkee-profile") ?? '') || null;
   } catch (e) {
     return null
   }
 };
 
-Talkee.setAuth = function (data) {
+Talkee.setAuth = function (data: Record<string, any>) {
   localStorage.setItem("talkee-jwt-token", data.token)
   localStorage.setItem("talkee-user-id", data.user_id)
 };
@@ -850,8 +726,8 @@ Talkee.clearRedirect = function () {
   return localStorage.removeItem("talkee-redirect-url")
 };
 
-Talkee.formatTime = function (timeStr) {
-  const pad = function (num) {
+Talkee.formatTime = function (timeStr: any) {
+  const pad = function (num: any) {
     if (parseInt(num) < 10) { return `0${num}`};
     return num
   };
@@ -864,11 +740,11 @@ Talkee.formatTime = function (timeStr) {
   return ret
 };
 
-Talkee.parseText = function (text) {
+Talkee.parseText = function (text: string) {
   return text.replace(/\n/g, '<br>')
 };
 
-Talkee.inject = async function (link) {
+Talkee.inject = async function (link: string) {
   let tag = 'script'
   if (link.slice(link.length - 4) === '.css') {
     tag = 'link'
@@ -886,12 +762,14 @@ Talkee.inject = async function (link) {
     }
     return new Promise(function (resolve, reject) {
       script.onload = function () {
-        resolve()
+        resolve(void 0)
       }
     })
   } else {
     return new Promise(function (resolve, reject) {
-      resolve()
+      resolve(void 0)
     })
   }
 }
+
+export default Talkee;
