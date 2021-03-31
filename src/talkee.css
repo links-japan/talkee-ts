@@ -135,9 +135,6 @@
   margin-top: 0px;
 }
 .talkee .talkee-comment {
-  background-image: url("./comment-header.svg");
-  background-repeat: no-repeat;
-  background-position: 60px 10px;
   margin-bottom: 32px;
   display: flex;
 }
@@ -175,7 +172,7 @@
   color: #eba131;
 }
 .talkee .talkee-comment-reward-icon {
-  background: transparent url(./badge.svg) 0 0 no-repeat;
+  background: transparent none 0 0 no-repeat;
   background-size: 24px;
   width: 24px;
   height: 24px;
