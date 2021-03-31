@@ -2,7 +2,7 @@
 
 // constants
 // @TODO refactor
-const CLIENT_ID = 'bf07d6d6-4d15-46ab-b5e4-6e66fac1151e';
+const CLIENT_ID = '3a6c513a-a189-4586-a0f8-cba80ed84de8';
 const API_BASE = 'https://links-login.getlinks.jp/api';
 const LOGIN_BASE = `https://oauth.getlinks.jp`;
 const LOGIN_URL = `${LOGIN_BASE}?client_id=${CLIENT_ID}&scope=PROFILE:READ+PHONE:READ&state=`;
