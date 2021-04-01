@@ -617,7 +617,7 @@ export const Talkee = function (opts: Record<string, any>) {
     this.expandable = opts.expandable || false;
     this.defaultAvatarUrl = opts.defaultAvatarUrl || DEFAULT_AVATAR;
 
-    apis.defaultParams = { site_id: this.siteId, slug: this.slug };
+    apis.setDefaultParams({ site_id: this.siteId, slug: this.slug });
 
     this.commentsContainer = opts.commentSelector;
     if (this.commentsContainer.constructor === String) {
