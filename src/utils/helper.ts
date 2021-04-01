@@ -1,32 +1,34 @@
 import { APP_TOKEN, APP_ENV } from "../constants";
 
 export const helper = {
+  // getUrlQuery: function () {
+  //   const search = window.location.search.slice(1);
+  //   const segs = search.split("&");
+  //   const ret = {};
+  //   const pairs = segs.map((x) => {
+  //     const r = x.split("=");
+  //     if (r.length === 1) {
+  //       r.push("");
+  //     }
+  //     return r;
+  //   });
+  //   for (let ix = 0; ix < pairs.length; ix++) {
+  //     const p = pairs[ix];
+  //     ret[p[0]] = p[1];
+  //   }
+  //   return ret;
+  // },
+
   getUrlQuery: function () {
-    const search = window.location.search.slice(1);
-    const segs = search.split("&");
-    const ret = {};
-    const pairs = segs.map((x) => {
-      const r = x.split("=");
-      if (r.length === 1) {
-        r.push("");
-      }
-      return r;
-    });
-    for (let ix = 0; ix < pairs.length; ix++) {
-      const p = pairs[ix];
-      ret[p[0]] = p[1];
+    const url = new URL(window.location.href);
+    const ret: Record<string, any> = {};
+    const it = (url.searchParams as any).entries();
+    for (let pair of it) {
+      ret[pair[0]] = pair[1];
     }
+
     return ret;
   },
-
-  // Talkee.getUrlQuery = function () {
-  //   const url = new URL(window.location.href)
-  //   const ret: Record<string, any> = {}
-  //   for(var pair of (url.searchParams as any).entries()) {
-  //     ret[pair[0]] = pair[1]
-  //   }
-  //   return ret
-  // };
 
   getToken: function () {
     if (APP_TOKEN && APP_ENV === "development") {

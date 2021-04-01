@@ -8,6 +8,7 @@ const postcss = require("rollup-plugin-postcss");
 const pkj = require(path.resolve(__dirname, "./package.json"));
 const replace = require("@rollup/plugin-replace");
 const image = require("@rollup/plugin-image");
+const cleanup = require("rollup-plugin-cleanup");
 
 // fallback env vars
 const CLIENT_ID = "3a6c513a-a189-4586-a0f8-cba80ed84de8";
@@ -25,44 +26,41 @@ module.exports = function (config) {
     }),
     commonjs(),
     typescript({
-      target: "es5",
+      target: "es2015",
+      module: "ESNext",
       lib: ["es5", "es6", "es2015", "es2016", "dom"],
       declaration: false,
     }),
     babel({
       exclude: "node_modules/**",
-      plugins: [["@babel/plugin-transform-runtime", { corejs: 3 }]],
+      plugins: [
+        ["@babel/plugin-transform-runtime", { corejs: 3, proposals: true }],
+      ],
       babelHelpers: "runtime",
       extensions,
     }),
     json(),
   ];
 
-  // config.push({
-  //   input: 'src/index.ts',
-  //   output: {
-  //     file: `umd/talkee.min.${pkj.version.replace(/\./g, '-')}.js`,
-  //     format: 'umd',
-  //     name: 'Talkee',
-  //     exports: 'default',
-  //     compact: true
-  //   },
-  //   plugins: defaultPlugins,
-  // });
-
   config.push({
-    input: "src/index.ts",
-    output: {
+    input: 'src/index.ts',
+    output: [{
+      file: `umd/talkee.min.${pkj.version.replace(/\./g, '-')}.js`,
+      format: 'umd',
+      name: 'Talkee',
+      exports: 'default',
+      compact: true
+    }, {
       file: `umd/talkee.min.latest.js`,
-      format: "umd",
-      name: "Talkee",
-      exports: "default",
-      compact: true,
-    },
+      format: 'umd',
+      name: 'Talkee',
+      exports: 'default',
+      compact: true
+    },],
     plugins: defaultPlugins,
   });
 
-  config.forEach((v) => {
+  config.forEach((v, k) => {
     v.plugins.push(
       postcss(),
       image(),
@@ -73,6 +71,9 @@ module.exports = function (config) {
         "process.env.API_BASE": `"${process.env.API_BASE || API_BASE}"`,
         "process.env.LOGIN_BASE": `"${process.env.LOGIN_BASE || LOGIN_BASE}"`,
         "process.env.CLIENT_ID": `"${process.env.CLIENT_ID || CLIENT_ID}"`,
+      }),
+      cleanup({
+        extensions: ['js', 'ts']
       })
     );
   });
