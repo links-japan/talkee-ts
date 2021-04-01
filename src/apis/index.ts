@@ -65,11 +65,11 @@ const getComments = async function (order, page) {
   });
 };
 
-const postComment = async function (slug, text) {
+const postComment = async function (slug, content) {
   return await request({
     method: "POST",
     url: "/comments",
-    data: { slug, text },
+    data: { slug, content },
   });
 };
 
