@@ -165,7 +165,7 @@ export const Talkee = function (opts: Record<string, any>) {
 
   this.loadComments = async function () {
     try {
-      const resp = await apis.getComments(this.sortMethod, this.page);
+      const resp: any = await apis.getComments(this.sortMethod, this.page);
       this.total = resp.total;
       this.itemPerPage = resp.ipp;
       this.totalPage = Math.ceil(resp.total / resp.ipp);
