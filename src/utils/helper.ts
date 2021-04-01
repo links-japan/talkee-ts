@@ -26,7 +26,6 @@ export const helper = {
     for (let pair of it) {
       ret[pair[0]] = pair[1];
     }
-
     return ret;
   },
 
