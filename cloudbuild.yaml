@@ -1,0 +1,32 @@
+options:
+  machineType: 'N1_HIGHCPU_8'
+
+steps:
+- name: 'ubuntu'
+  args: ['ls', '-la']
+
+- name: 'ubuntu'
+  args: ['touch', '.env']
+
+- name: 'ubuntu'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+        echo "APP_ENV=prod" >> .env
+        echo "APP_TOKEN=${_APP_TOKEN}" >> .env
+        echo "API_BASE=${_API_BASE}" > .env
+        echo "LOGIN_BASE=${_LOGIN_BASE}"  >> .env
+        echo "CLIENT_ID=${_CLIENT_ID}" >> .env
+
+- name: 'ubuntu'
+  args: ['cat', '.env']
+     
+- id: 'build links image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/mixin-japan/github.com/links-japan/talkee-ts:$TAG_NAME', '.']
+
+- id: 'push links image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/mixin-japan/github.com/links-japan/talkee-ts:$TAG_NAME']
+
