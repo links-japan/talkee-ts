@@ -9,6 +9,7 @@
   font-family: inherit;
   position: relative;
 }
+
 @media screen and (max-width: 768px) {
   .talkee {
     padding: 16px;
