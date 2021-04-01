@@ -14,8 +14,12 @@ yarn
 yarn build
 ```
 
-## release
+## publish npm package
 
 ```shell
 yarn release
 ```
+
+## pass env variables
+
+please see .env.example
