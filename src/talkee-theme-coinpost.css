@@ -68,3 +68,22 @@
   text-decoration: none;
   font-weight: bold;
 }
+
+.talkee .talkee-editor-mask {
+  background-color: #f8fafc;
+}
+
+.talkee .talkee-tap-to-login {
+  background-color: #5a97a6;
+  height: 42px;
+  padding: 0 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+  border-radius: 6px;
+  padding-left: 50px;
+  background-size: 25px 20px;
+  background-repeat: no-repeat;
+  background-position: 16px 10px;
+}

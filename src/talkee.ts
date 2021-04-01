@@ -462,8 +462,15 @@ export const Talkee = function (opts: Record<string, any>) {
       const loginUrl = self.buildLoginURL()
       const editorMask = Talkee.$e('div', {
         className: 'talkee-editor-mask',
-        innerHTML: '<a class="talkee-tap-to-login" rel="nofollow" href="' + loginUrl + '">' + $t('tap_to_login') + '</a>',
       })
+      const loginButton = Talkee.$e('a', {
+        className: 'talkee-tap-to-login',
+        innerText: $t('tap_to_login')
+      })
+      loginButton.style.backgroundImage = `url("${icons.commentBtnIcon}")`;
+      loginButton.setAttribute('rel', 'nofollow');
+      loginButton.setAttribute('href', loginUrl);
+      editorMask.append(loginButton)
       editorCan.appendChild(editorMask)
     }
     container.appendChild(editorCan)

@@ -119,12 +119,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #f3f3f3;
 }
 .talkee .talkee-editor.blur .talkee-editor-area,
 .talkee .talkee-editor.blur .talkee-editor-left,
 .talkee .talkee-editor.blur .talkee-editor-ctrl {
-  -webkit-filter: blur(6px) grayscale(50%);
-  filter: blur(6px) grayscale(50%);
+  /* -webkit-filter: blur(6px) grayscale(50%);
+  filter: blur(6px) grayscale(50%); */
 }
 .talkee .talkee-tap-to-login {
   text-decoration: none;
