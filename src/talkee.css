@@ -86,13 +86,18 @@
   resize: none;
   overflow: hidden;
   min-height: 24px;
-  max-height: 800px;
+  max-height: 300px;
+}
+.talkee .talkee-editor-hint {
+  visibility: hidden;
+  font-size: 13px;
+  color: tomato;
 }
 .talkee .talkee-editor-ctrl {
-  padding: 10px;
+  padding: 0px;
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 .talkee .talkee-editor-submit {
   padding: 8px 12px;
@@ -179,13 +184,20 @@
   width: 24px;
   height: 24px;
 }
+
 .talkee .talkee-comment-reply-button {
   float: right;
 }
+
 .talkee .talkee-comment-content {
   padding: 10px;
   word-break: break-word;
-  line-height: 1.3;
+  line-height: 1.4;
+}
+
+.talkee .talkee-comment-content-more {
+  cursor: pointer;
+  line-height: 1.4;
 }
 
 .talkee .talkee-comment-meta {
