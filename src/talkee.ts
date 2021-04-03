@@ -572,8 +572,8 @@ export const Talkee = function (opts: Record<string, any>) {
     this.commentsContainer.children[0].appendChild(commentsCan);
   };
 
+  const self = this;
   this.init = async function () {
-    const self = this;
     console.log("talkee options:", opts);
 
     this.apiBase = opts.apiBase || API_BASE;
@@ -644,9 +644,10 @@ export const Talkee = function (opts: Record<string, any>) {
       self.applySortMethod(self.sortMethod);
     }, 300);
   };
+
   // @TODO debounce
   setTimeout(function () {
-    this.init();
+    self.init();
   }, 300);
 };
 
