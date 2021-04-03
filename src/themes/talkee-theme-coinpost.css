@@ -48,7 +48,9 @@
 .talkee .talkee-comment-content {
   padding: 0;
 }
-
+.talkee .talkee-comment-content-more {
+  color: #5a97a6;
+}
 .talkee .talkee-comment-meta {
   margin-top: 12px;
 }
