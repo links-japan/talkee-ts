@@ -618,6 +618,7 @@ export const Talkee = function (opts: Record<string, any>) {
       window.location.hash &&
       window.location.hash.indexOf("#talkee-anchor") === 0
     ) {
+      // @TODO debounce
       setTimeout(() => {
         const m = /comment-(\d+)/.exec("#talkee-anchor-comment-15");
         if (m && m.length > 1) {
@@ -638,11 +639,15 @@ export const Talkee = function (opts: Record<string, any>) {
 
     this.buildTalkeeUI();
 
+    // @TODO debounce
     setTimeout(function () {
       self.applySortMethod(self.sortMethod);
     }, 300);
   };
-  this.init();
+  // @TODO debounce
+  setTimeout(function () {
+    this.init();
+  }, 300);
 };
 
 Talkee.getUrlQuery = helper.getUrlQuery;
