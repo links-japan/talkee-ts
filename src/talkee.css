@@ -110,6 +110,7 @@
   transition: all 0.3s ease;
   justify-content: center;
   align-items: center;
+  white-space: nowrap;
 }
 
 .talkee .talkee-editor-submit[disabled] {
@@ -193,6 +194,7 @@
   padding: 10px;
   word-break: break-word;
   line-height: 1.4;
+  white-space: pre-line;
 }
 
 .talkee .talkee-comment-content-more {

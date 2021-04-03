@@ -67,7 +67,7 @@ export const helper = {
     const url = window.location.href
       .replace(/code=[a-z0-9A-Z]+/, "code=")
       .replace(/state=[a-z0-9A-Z]+/, "state=");
-    return localStorage.setItem("talkee-redirect-url", url);
+    return localStorage.setItem("talkee-redirect-url", url + "#talkee-anchor");
   },
 
   clearRedirect: function () {
@@ -93,7 +93,8 @@ export const helper = {
   },
 
   parseText: function (text) {
-    return text.replace(/\n/g, "<br>");
+    // return text.replace(/\n/g, "<br>");
+    return text;
   },
 
   inject: async function (link) {

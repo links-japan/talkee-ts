@@ -36,7 +36,7 @@ const defaultLocales = {
   ja: {
     tap_to_login: "ログインしてコメントする",
     submit: "投稿する",
-    like: "参考になった",
+    like: "いいね",
     comment_placeholder: "コメントを書く",
     loading: "ロード中",
     sort_by_id_desc_button: "新着順",
