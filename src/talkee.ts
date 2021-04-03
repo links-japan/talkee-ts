@@ -627,8 +627,9 @@ export const Talkee = function (opts: Record<string, any>) {
           if (anchor) {
             anchor.scrollIntoView(false);
           }
+        } else {
+          this.commentsContainer.scrollIntoView();
         }
-        this.commentsContainer.scrollIntoView();
       }, 1000);
     }
 
