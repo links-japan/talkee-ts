@@ -93,7 +93,8 @@ export const helper = {
   },
 
   parseText: function (text) {
-    return text.replace(/\n/g, "<br>");
+    // return text.replace(/\n/g, "<br>");
+    return text;
   },
 
   inject: async function (link) {

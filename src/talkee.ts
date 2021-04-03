@@ -209,14 +209,14 @@ export const Talkee = function (opts: Record<string, any>) {
         innerText: $t("content_more"),
       });
       moreButton.addEventListener("click", () => {
-        commentContent.innerHTML = helper.parseText(
+        commentContent.innerText = helper.parseText(
           Base64.decode(commentContent.getAttribute("data-text") as string)
         );
         moreButton.style.display = "none";
       });
       commentContent.setAttribute("data-text", Base64.encode(comment.content));
     }
-    commentContent.innerHTML = commentText;
+    commentContent.innerText = commentText;
     commentRight.appendChild(commentContent);
     if (moreButton) {
       commentRight.appendChild(moreButton);
