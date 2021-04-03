@@ -3,66 +3,7 @@ import Base64 from "./utils/base64";
 import icons from "./icons/index";
 import apis from "./apis";
 import { API_BASE, LOGIN_URL, TWEET_BASE, DEFAULT_AVATAR } from "./constants";
-
-// locale
-// @TODO refactor
-const defaultLocales = {
-  en: {
-    tap_to_login: "Tap to login to comment",
-    submit: "Submit",
-    like: "Like",
-    comment_placeholder: "Leave your comment here.",
-    loading: "Loading",
-    sort_by_id_desc_button: "Newest",
-    sort_by_id_asc_button: "Oldest",
-    sort_by_fav_button: "Score",
-    prev_page: "Prev",
-    next_page: "Next",
-    no_comment_hint: "No comment yet.",
-    expand_button: "View all comments",
-    error_comment_too_frequently: "Comment too frequently",
-  },
-  zh: {
-    tap_to_login: "点击登录发评论",
-    submit: "提交",
-    like: "赞同",
-    comment_placeholder: "留下你的评论",
-    loading: "加载中",
-    sort_by_id_desc_button: "新到旧",
-    sort_by_id_asc_button: "旧到新",
-    sort_by_fav_button: "点赞数",
-    prev_page: "上一页",
-    next_page: "下一页",
-    no_comment_hint: "没有评论",
-    expand_button: "查看所有评论",
-    error_comment_too_frequently: "评论过于频繁，请稍后再试",
-  },
-  ja: {
-    tap_to_login: "ログインしてコメントする",
-    submit: "投稿する",
-    like: "参考になった",
-    comment_placeholder: "コメントを書く",
-    loading: "ロード中",
-    sort_by_id_desc_button: "新着順",
-    sort_by_id_asc_button: "古い順",
-    sort_by_fav_button: "おすすめ順",
-    prev_page: "前へ",
-    next_page: "次へ",
-    no_comment_hint: "この記事にはまだコメントがありません。",
-    expand_button: "もっと見る",
-    error_comment_too_frequently: "間隔をあけて投稿してください。",
-  },
-};
-
-const getCurrentLocale = function () {
-  const lang = window.navigator.language;
-  return lang.slice(0, 2);
-};
-
-const $t = function (key: keyof typeof defaultLocales["en"]) {
-  const locale = getCurrentLocale() as keyof typeof defaultLocales;
-  return defaultLocales[locale][key] || key;
-};
+import { $t } from "./i18n";
 
 const $e = function (tag: string, opts: Record<string, any>) {
   const el = document.createElement(tag);
@@ -132,11 +73,18 @@ export const Talkee = function (opts: Record<string, any>) {
 
   // controller methods
   this.checkTextareaStatus = function (area) {
-    var btn = this.commentsContainer.querySelector(".talkee-editor-submit");
-    if (area.value.trim().length === 0) {
+    const btn = this.commentsContainer.querySelector(".talkee-editor-submit");
+    const hint = this.commentsContainer.querySelector(".talkee-editor-hint");
+    if (area.value.trim().length === 0 || area.value.trim().length > 512) {
       btn.disabled = true;
+      if (area.value.trim().length > 512) {
+        hint.style.visibility = "visible";
+      } else {
+        hint.style.visibility = "hidden";
+      }
     } else {
       btn.disabled = false;
+      hint.style.visibility = "hidden";
     }
   };
 
@@ -250,18 +198,29 @@ export const Talkee = function (opts: Record<string, any>) {
 
     // content
     const commentContent = $e("div", { className: "talkee-comment-content" });
-    let commentText = helper.parseText(comment.content);
-    if (comment.recipient) {
-      commentText =
-        '<a href="#comment-' +
-        comment.recipient.id +
-        '" class="link">@' +
-        comment.recipient.name +
-        "</a> " +
-        commentText;
+    let commentText: string = "";
+    let moreButton: any = null;
+    if (comment.content.length < 160) {
+      commentText = helper.parseText(comment.content);
+    } else {
+      commentText = helper.parseText(comment.content.slice(0, 160));
+      moreButton = $e("a", {
+        className: "talkee-comment-content-more",
+        innerText: $t("content_more"),
+      });
+      moreButton.addEventListener("click", () => {
+        commentContent.innerHTML = helper.parseText(
+          Base64.decode(commentContent.getAttribute("data-text") as string)
+        );
+        moreButton.style.display = "none";
+      });
+      commentContent.setAttribute("data-text", Base64.encode(comment.content));
     }
     commentContent.innerHTML = commentText;
     commentRight.appendChild(commentContent);
+    if (moreButton) {
+      commentRight.appendChild(moreButton);
+    }
 
     // favor & tweet
     const metaContent = $e("div", { className: "talkee-comment-meta" });
@@ -275,7 +234,7 @@ export const Talkee = function (opts: Record<string, any>) {
       const commentURL = new URL(window.location.href);
       commentURL.hash = "#talkee-anchor-comment-" + comment.id;
       commentURL.searchParams.append("talkee_page", self.page);
-      let text = `${comment.content}`;
+      let text = `---\n${comment.content}`;
       if (self.tweetTags && self.tweetTags.length > 0) {
         text += ` ${self.tweetTags.join(" ")}`;
       }
@@ -399,6 +358,9 @@ export const Talkee = function (opts: Record<string, any>) {
     editorArea.addEventListener("propertychange", function () {
       self.checkTextareaStatus(editorArea);
     });
+    editorArea.addEventListener("blur", function () {
+      self.checkTextareaStatus(editorArea);
+    });
     editorRight.appendChild(editorArea);
     this.editorArea = editorArea;
 
@@ -411,6 +373,11 @@ export const Talkee = function (opts: Record<string, any>) {
     editorSubmit.addEventListener("click", function () {
       self.sendComment();
     });
+    const hint = $e("div", {
+      className: "talkee-editor-hint",
+      innerText: $t("too_many_charactors"),
+    });
+    editorCtrl.appendChild(hint);
     editorCtrl.appendChild(editorSubmit);
 
     editorRight.appendChild(editorCtrl);
@@ -617,7 +584,7 @@ export const Talkee = function (opts: Record<string, any>) {
     this.expandable = opts.expandable || false;
     this.defaultAvatarUrl = opts.defaultAvatarUrl || DEFAULT_AVATAR;
 
-    apis.defaultParams = { site_id: this.siteId, slug: this.slug };
+    apis.setDefaultParams({ site_id: this.siteId, slug: this.slug });
 
     this.commentsContainer = opts.commentSelector;
     if (this.commentsContainer.constructor === String) {

@@ -2,7 +2,13 @@ import axios from "axios";
 import utils from "../utils/helper";
 import { API_BASE } from "../constants";
 
-export let defaultParams: any = {};
+const setDefaultParams = function (params) {
+  (window as any).__TALKEE_PARAMS__ = params;
+};
+
+const getDefaultParams = function () {
+  return (window as any).__TALKEE_PARAMS__;
+};
 
 const request = async function (opts) {
   let headers = {
@@ -11,7 +17,7 @@ const request = async function (opts) {
   if (opts.headers) {
     headers = Object.assign(headers, opts.headers);
   }
-  let params = defaultParams;
+  let params = getDefaultParams() || {};
   if (opts.params) {
     params = Object.assign(params, opts.params);
   }
@@ -88,7 +94,8 @@ const putUnfavor = async function (id) {
 };
 
 export default {
-  defaultParams,
+  setDefaultParams,
+  getDefaultParams,
   request,
   getMe,
   auth,
