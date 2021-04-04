@@ -258,11 +258,11 @@ export const Talkee = function (opts: Record<string, any>) {
       }`,
       innerText: $t("like"),
     });
-    if (comment["favored"]) {
-      favButton.style.backgroundImage = 'url("' + icons.likedIcon + '")';
-    } else {
-      favButton.style.backgroundImage = 'url("' + icons.likeIcon + '")';
-    }
+
+    favButton.style.backgroundImage = `url("${
+      comment["favored"] ? icons.likedIcon : icons.likeIcon
+    }")`;
+
     favButton.addEventListener("click", function () {
       if (!self.isSigned) {
         const loginUrl = self.buildLoginURL();
@@ -271,11 +271,22 @@ export const Talkee = function (opts: Record<string, any>) {
       }
       if (comment["favored"]) {
         apis.putUnfavor(comment["id"]);
+        favButton.classList.remove("favored");
+        comment["favored"] = false;
+        comment["favor_count"] -= 1;
       } else {
         apis.putFavor(comment["id"]);
+        favButton.classList.add("favored");
+        comment["favored"] = true;
+        comment["favor_count"] += 1;
       }
-      window.location.reload();
+
+      favCount.innerText = String(comment["favor_count"] || "");
+      favButton.style.backgroundImage = `url("${
+        comment["favored"] ? icons.likedIcon : icons.likeIcon
+      }")`;
     });
+
     favWrapper.appendChild(favButton);
     metaContent.appendChild(favWrapper);
 
@@ -573,6 +584,7 @@ export const Talkee = function (opts: Record<string, any>) {
   };
 
   const self = this;
+
   this.init = async function () {
     console.log("talkee options:", opts);
 
@@ -642,13 +654,13 @@ export const Talkee = function (opts: Record<string, any>) {
     // @TODO debounce
     setTimeout(function () {
       self.applySortMethod(self.sortMethod);
-    }, 300);
+    }, 200);
   };
 
   // @TODO debounce
   setTimeout(function () {
     self.init();
-  }, 300);
+  }, 200);
 };
 
 Talkee.getUrlQuery = helper.getUrlQuery;
