@@ -12,7 +12,7 @@ const cleanup = require("rollup-plugin-cleanup");
 
 // fallback env vars
 const CLIENT_ID = "3a6c513a-a189-4586-a0f8-cba80ed84de8";
-const API_BASE = "https://links-login.getlinks.jp/api";
+const API_BASE = "https://links-login-staging.getlinks.jp/api";
 const LOGIN_BASE = `https://oauth.getlinks.jp`;
 
 module.exports = function (config) {
@@ -43,20 +43,23 @@ module.exports = function (config) {
   ];
 
   config.push({
-    input: 'src/index.ts',
-    output: [{
-      file: `umd/talkee.min.${pkj.version.replace(/\./g, '-')}.js`,
-      format: 'umd',
-      name: 'Talkee',
-      exports: 'default',
-      compact: true
-    }, {
-      file: `umd/talkee.min.latest.js`,
-      format: 'umd',
-      name: 'Talkee',
-      exports: 'default',
-      compact: true
-    },],
+    input: "src/index.ts",
+    output: [
+      {
+        file: `umd/talkee.min.${pkj.version.replace(/\./g, "-")}.js`,
+        format: "umd",
+        name: "Talkee",
+        exports: "default",
+        compact: true,
+      },
+      {
+        file: `umd/talkee.min.latest.js`,
+        format: "umd",
+        name: "Talkee",
+        exports: "default",
+        compact: true,
+      },
+    ],
     plugins: defaultPlugins,
   });
 
@@ -73,7 +76,7 @@ module.exports = function (config) {
         "process.env.CLIENT_ID": `"${process.env.CLIENT_ID || CLIENT_ID}"`,
       }),
       cleanup({
-        extensions: ['js', 'ts']
+        extensions: ["js", "ts"],
       })
     );
   });
