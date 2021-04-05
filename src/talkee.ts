@@ -53,7 +53,7 @@ export const Talkee = function (opts: Record<string, any>) {
       try {
         myComment = await apis.postComment(this.slug, text);
       } catch (e) {
-        if (e.response && e.response.status === 400) {
+        if (e.response && e.response.status === 429) {
           alert($t("error_comment_too_frequently"));
           return;
         }
