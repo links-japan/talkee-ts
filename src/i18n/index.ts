@@ -15,6 +15,7 @@ const defaultLocales = {
     error_comment_too_frequently: "Comment too frequently",
     too_many_charactors: "Too many charactors",
     content_more: "More",
+    logout: "Logout",
   },
   zh: {
     tap_to_login: "点击登录发评论",
@@ -32,6 +33,7 @@ const defaultLocales = {
     error_comment_too_frequently: "评论过于频繁，请稍后再试",
     too_many_charactors: "输入字数太多了",
     content_more: "查看更多",
+    logout: "登出",
   },
   ja: {
     tap_to_login: "ログインしてコメントする",
@@ -49,6 +51,7 @@ const defaultLocales = {
     error_comment_too_frequently: "間隔をあけて投稿してください。",
     too_many_charactors: "最大文字数（512）をオーバーしています",
     content_more: "もっと見る",
+    logout: "ログアウト",
   },
 };
 

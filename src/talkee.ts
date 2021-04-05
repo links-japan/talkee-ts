@@ -62,6 +62,7 @@ export const Talkee = function (opts: Record<string, any>) {
       }
       if (myComment) {
         area.value = "";
+        area.style.height = "5px";
         const container = this.commentsContainer.querySelector(
           ".talkee-comments"
         );
@@ -120,14 +121,16 @@ export const Talkee = function (opts: Record<string, any>) {
       this.commentsContainer.querySelector(
         ".talkee-sort-bar-comment-count"
       ).innerText = this.total;
+      const expansionPanel = this.commentsContainer.querySelector(
+        ".talkee-expansion-panel"
+      );
       if (this.expandable) {
-        this.commentsContainer.querySelector(
-          ".talkee-expansion-panel"
-        ).style.display = this.total > 3 ? "block" : "none";
+        expansionPanel.style.display = this.total > 3 ? "block" : "none";
+        if (this.total <= 3) {
+          this.commentsContainer.children[0].classList.remove("expandable");
+        }
       } else {
-        this.commentsContainer.querySelector(
-          ".talkee-expansion-panel"
-        ).style.display = "none";
+        expansionPanel.style.display = "none";
       }
       this.updateComments(resp.comments);
     } catch (err) {
@@ -466,9 +469,40 @@ export const Talkee = function (opts: Record<string, any>) {
     sortByIdAscButton.addEventListener("click", function () {
       self.applySortMethod("id-asc");
     });
+
+    const menu = $e("ul", {
+      className: "talkee-menu",
+    });
+    const menuItemLogout = $e("li", {
+      className: "talkee-menu-item talkee-menu-item-logout",
+      innerText: $t("logout"),
+    });
+    menuItemLogout.addEventListener("click", () => {
+      helper.removeAuth();
+      window.location.reload();
+    });
+    menu.append(menuItemLogout);
+
+    const menuButton = $e("button", {
+      className: "talkee-button talkee-menu-button",
+      innerText: " ",
+    });
+    menuButton.addEventListener("click", () => {
+      if (menu.style.display === "block") {
+        menu.style.display = "none";
+      } else {
+        menu.style.display = "block";
+      }
+    });
+    menuButton.style.backgroundImage = 'url("' + icons.menuIcon + '")';
+
     sortBarRight.appendChild(sortByFavButton);
     sortBarRight.appendChild(sortByIdButton);
     sortBarRight.appendChild(sortByIdAscButton);
+    if (this.isSigned) {
+      sortBarRight.appendChild(menuButton);
+      sortBarRight.appendChild(menu);
+    }
     sortBar.appendChild(sortBarRight);
 
     container.appendChild(sortBar);

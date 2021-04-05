@@ -5,15 +5,16 @@ const commonjs = require("@rollup/plugin-commonjs");
 const { babel } = require("@rollup/plugin-babel");
 const json = require("@rollup/plugin-json");
 const postcss = require("rollup-plugin-postcss");
+const scss = require("rollup-plugin-scss");
 const pkj = require(path.resolve(__dirname, "./package.json"));
 const replace = require("@rollup/plugin-replace");
 const image = require("@rollup/plugin-image");
 const cleanup = require("rollup-plugin-cleanup");
 
 // fallback env vars
-const CLIENT_ID = "3a6c513a-a189-4586-a0f8-cba80ed84de8";
-const API_BASE = "https://links-login-staging.getlinks.jp/api";
-const LOGIN_BASE = `https://oauth.getlinks.jp`;
+const CLIENT_ID = "";
+const API_BASE = "";
+const LOGIN_BASE = "";
 
 module.exports = function (config) {
   const extensions = [".ts", ".js", ".svg"];
@@ -65,6 +66,7 @@ module.exports = function (config) {
 
   config.forEach((v, k) => {
     v.plugins.push(
+      scss(),
       postcss(),
       image(),
       replace({
