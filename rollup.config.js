@@ -5,6 +5,7 @@ const commonjs = require("@rollup/plugin-commonjs");
 const { babel } = require("@rollup/plugin-babel");
 const json = require("@rollup/plugin-json");
 const postcss = require("rollup-plugin-postcss");
+const scss = require("rollup-plugin-scss");
 const pkj = require(path.resolve(__dirname, "./package.json"));
 const replace = require("@rollup/plugin-replace");
 const image = require("@rollup/plugin-image");
@@ -65,6 +66,7 @@ module.exports = function (config) {
 
   config.forEach((v, k) => {
     v.plugins.push(
+      scss(),
       postcss(),
       image(),
       replace({
