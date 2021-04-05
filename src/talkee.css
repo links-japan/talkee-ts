@@ -305,6 +305,33 @@
   margin-right: 0;
 }
 
+.talkee .talkee-menu-button {
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 24px;
+  border: none;
+  outline: none;
+  width: 32px;
+  margin-right: -10px;
+}
+
+.talkee .talkee-menu {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  padding: 16px;
+  list-style: none;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  border-radius: 8px;
+  display: none;
+}
+
+.talkee .talkee-menu-item {
+  cursor: pointer;
+}
+
 .talkee .talkee-pagination {
   display: flex;
   justify-content: center;

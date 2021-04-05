@@ -11,9 +11,9 @@ const image = require("@rollup/plugin-image");
 const cleanup = require("rollup-plugin-cleanup");
 
 // fallback env vars
-const CLIENT_ID = "3a6c513a-a189-4586-a0f8-cba80ed84de8";
-const API_BASE = "https://links-login-staging.getlinks.jp/api";
-const LOGIN_BASE = `https://oauth.getlinks.jp`;
+const CLIENT_ID = "";
+const API_BASE = "";
+const LOGIN_BASE = "";
 
 module.exports = function (config) {
   const extensions = [".ts", ".js", ".svg"];

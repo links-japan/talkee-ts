@@ -5,6 +5,7 @@ import sortIcon from "./sort.svg";
 import commentIcon from "./comment.svg";
 import commentBtnIcon from "./comment-btn.svg";
 import badgeIcon from "./badge.svg";
+import menuIcon from "./menu.svg";
 
 export const icons = {
   likeIcon,
@@ -14,6 +15,7 @@ export const icons = {
   commentIcon,
   commentBtnIcon,
   badgeIcon,
+  menuIcon,
 };
 
 export default icons;
