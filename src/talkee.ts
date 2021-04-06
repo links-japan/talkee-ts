@@ -542,8 +542,10 @@ export const Talkee = function (opts: Record<string, any>) {
       nextPageButton.style.display = "none";
     }
     // others
-    const prefixIndicatorCount = Math.min(this.totalPage, 3);
-    for (let ix = 0; ix < prefixIndicatorCount; ix++) {
+    const range = 5;
+    const prefixIndicatorCount = Math.min(this.totalPage, range);
+    const startFrom = Math.max(this.page - range, 0);
+    for (let ix = startFrom; ix < startFrom + prefixIndicatorCount; ix++) {
       const btn = $e("button", {
         className: `talkee-button talkee-pagination-button talkee-pagination-${
           ix + 1
@@ -559,6 +561,7 @@ export const Talkee = function (opts: Record<string, any>) {
       });
       pageIndicators.appendChild(btn);
     }
+    // dots and last page
     paginationCan.appendChild(prevPageButton);
     paginationCan.appendChild(pageIndicators);
     paginationCan.appendChild(nextPageButton);
