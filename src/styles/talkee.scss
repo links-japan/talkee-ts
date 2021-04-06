@@ -339,17 +339,18 @@ a {
   }
   .talkee-pagination-button {
     height: 42px;
-    padding: 8px 12px;
-    font-size: inherit;
+    padding: 8px 10px;
+    font-size: 14px;
     border: 1px solid #e0e0e0;
     box-sizing: border-box;
     border-radius: 6px;
     background: transparent;
-    margin: 0 4px;
+    margin: 0 2px;
     cursor: pointer;
   }
   .talkee-pagination-button[disabled] {
     opacity: 0.5;
+    cursor: default;
   }
 
   .talkee-no-comment-hint {
