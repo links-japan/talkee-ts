@@ -113,7 +113,7 @@ export default class SubComments {
 
     this.loadMoreBtn = $e("button", {
       className: "talkee-button talkee-sub-load-more-button",
-      innerText: "Load more",
+      innerText: $t("load_more"),
     });
     this.loadMoreBtn.addEventListener("click", () => {
       this.fetch(true);

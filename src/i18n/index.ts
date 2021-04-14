@@ -19,6 +19,7 @@ const defaultLocales = {
     too_many_charactors: "Too many charactors",
     content_more: "More",
     logout: "Logout",
+    load_more: "Load more",
   },
   zh: {
     tap_to_login: "点击登录发评论",
@@ -40,6 +41,7 @@ const defaultLocales = {
     too_many_charactors: "输入字数太多了",
     content_more: "查看更多",
     logout: "登出",
+    load_more: "加载更多",
   },
   ja: {
     tap_to_login: "ログインしてコメントする",
@@ -61,6 +63,7 @@ const defaultLocales = {
     too_many_charactors: "最大文字数（512）をオーバーしています",
     content_more: "もっと見る",
     logout: "ログアウト",
+    load_more: "もっと読み込む",
   },
 };
 
