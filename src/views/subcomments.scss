@@ -1,0 +1,54 @@
+.talkee {
+  .talkee-sub-comments {
+    border-radius: 4px;
+    margin: 12px 0;
+    padding: 12px;
+    background-color: rgba(0, 0, 0, 0.03);
+    .talkee-sub-comments-editor {
+      margin-bottom: 8px;
+      border: none;
+      width: 100%;
+      min-height: 40px;
+      font-size: 13px;
+      padding: 4px 8px;
+    }
+    .talkee-sub-comments-ul {
+      margin-top: 16px;
+      padding: 0;
+    }
+    .talkee-comment {
+      margin-bottom: 32px;
+      display: flex;
+      &.sub {
+        margin-bottom: 10px;
+        &:last-child {
+          margin-bottom: 0px;
+        }
+        .talkee-comment-avatar {
+          height: 24px;
+          width: 24px;
+        }
+        .talkee-comment-left {
+          flex-basis: 32px;
+        }
+        .talkee-comment-right-top {
+          font-size: 10px;
+        }
+        .talkee-comment-content {
+          font-size: 12px;
+        }
+        .talkee-comment-meta {
+          margin-top: 2px;
+        }
+        .talkee-comment-content-more {
+          font-size: 12px;
+        }
+      }
+    }
+    .talkee-sub-load-more-button {
+      margin-top: 12px;
+      display: block;
+      width: 100%;
+    }
+  }
+}
