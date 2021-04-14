@@ -263,10 +263,21 @@ export const Talkee = function (opts: Record<string, any>) {
   this.updateComments = function (comments) {
     const container = this.commentsContainer.querySelector(".talkee-comments");
     container.innerHTML = "";
+    const proc = (page) => {
+      this.page = page;
+      this.loadComments();
+      this.commentsContainer.scrollIntoView();
+    };
     if (comments && comments.length) {
       this.appendComments(container, comments);
-      // update pagination
-      this.buildPaginationUI(container, comments);
+      const pagination = new views.Pagination(this, {
+        page: this.page,
+        totalPage: this.totalPage,
+        prev: proc,
+        next: proc,
+        locate: proc,
+      });
+      container.append(pagination.render());
     } else {
       container.innerHTML = `<div class="talkee-no-comment-hint">${$t(
         "no_comment_hint"
@@ -358,66 +369,6 @@ export const Talkee = function (opts: Record<string, any>) {
       editorCan.appendChild(editorMask);
     }
     container.appendChild(editorCan);
-  };
-
-  this.buildPaginationUI = function (container, comments) {
-    const self = this;
-    // [prev] [1], [2], [3] ... [n] [next]
-    const paginationCan = $e("div", { className: "talkee-pagination" });
-    const pageIndicators = $e("div", {
-      className: "talkee-pagination-indicators",
-    });
-    const prevPageButton = $e("button", {
-      className:
-        "talkee-button talkee-pagination-button talkee-pagination-prev-button",
-      innerText: $t("prev_page"),
-    });
-    // prev
-    prevPageButton.addEventListener("click", function () {
-      self.page = Math.max(self.page - 1, 1);
-      self.loadComments();
-    });
-    if (this.page === 1) {
-      prevPageButton.style.display = "none";
-    }
-    // next
-    const nextPageButton = $e("button", {
-      className:
-        "talkee-button talkee-pagination-button talkee-pagination-next-button",
-      innerText: $t("next_page"),
-    });
-    nextPageButton.addEventListener("click", function () {
-      self.page = Math.min(self.page + 1, self.totalPage);
-      self.loadComments();
-    });
-    if (this.page === this.totalPage) {
-      nextPageButton.style.display = "none";
-    }
-    // others
-    const range = 5;
-    const prefixIndicatorCount = Math.min(this.totalPage, range);
-    const startFrom = Math.max(this.page - range, 0);
-    for (let ix = startFrom; ix < startFrom + prefixIndicatorCount; ix++) {
-      const btn = $e("button", {
-        className: `talkee-button talkee-pagination-button talkee-pagination-${
-          ix + 1
-        }-button`,
-        innerText: ix + 1,
-      }) as HTMLButtonElement;
-      if (this.page === ix + 1) {
-        btn.disabled = true;
-      }
-      btn.addEventListener("click", function () {
-        self.page = ix + 1;
-        self.loadComments();
-      });
-      pageIndicators.appendChild(btn);
-    }
-    // dots and last page
-    paginationCan.appendChild(prevPageButton);
-    paginationCan.appendChild(pageIndicators);
-    paginationCan.appendChild(nextPageButton);
-    container.appendChild(paginationCan);
   };
 
   this.buildLoadingUI = function () {

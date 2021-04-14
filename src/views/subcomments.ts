@@ -2,7 +2,6 @@ import helper from "../utils/helper";
 import apis from "../apis";
 import { $e } from "../utils/dom";
 import { $t } from "../i18n";
-import { TWEET_BASE } from "../constants";
 
 import "./subcomments.scss";
 import { IComment } from "../types/api";
@@ -96,6 +95,8 @@ export default class SubComments {
         return;
       }
       this.ul?.prepend(this.talkee.buildCommentUI(resp, true));
+      (this.ul as any).show();
+      (subCommentsEditor as any).value = "";
     });
     subCommentsContainer.appendChild(subCommentsSubmit);
 
