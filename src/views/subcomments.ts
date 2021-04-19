@@ -80,7 +80,7 @@ export default class SubComments {
 
     const subCommentsSubmit = $e("button", {
       className: "talkee-button talkee-sub-comments-submit",
-      innerText: $t("reply"),
+      innerText: $t("submit"),
     });
     subCommentsSubmit.addEventListener("click", async () => {
       let resp: IComment | any = null;

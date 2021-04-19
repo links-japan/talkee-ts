@@ -39,8 +39,8 @@ export default class Metabar {
       const replyButton = $e("button", {
         className: `talkee-button talkee-meta-reply-button`,
         innerText:
-          $t("reply") +
-          `${this.comment.reply_count ? ` (${this.comment.reply_count})` : ""}`,
+          `${this.comment.reply_count ? `${this.comment.reply_count}` : ""}` +
+          $t("reply"),
       });
 
       replyButton.addEventListener("click", async () => {
