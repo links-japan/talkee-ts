@@ -1,6 +1,7 @@
 import axios from "axios";
 import utils from "../utils/helper";
 import { API_BASE } from "../constants";
+import { IComment } from "../types/api";
 
 const setDefaultParams = function (params) {
   (window as any).__TALKEE_PARAMS__ = params;
@@ -10,17 +11,21 @@ const getDefaultParams = function () {
   return (window as any).__TALKEE_PARAMS__;
 };
 
-const request = async function (opts) {
-  let headers = {
-    Authorization: "Bearer " + utils.getToken(),
-  };
-  if (opts.headers) {
-    headers = Object.assign(headers, opts.headers);
-  }
+const request = async function (opts): Promise<any> {
   let params = getDefaultParams() || {};
   if (opts.params) {
     params = Object.assign(params, opts.params);
   }
+
+  let headers = {
+    Authorization: `Bearer ${utils.getToken()}`,
+    "X-LINKS-SITE-ID": params.site_id,
+    "X-LINKS-SLUG": params.slug,
+  };
+  if (opts.headers) {
+    headers = Object.assign(headers, opts.headers);
+  }
+
   let resp: any = null;
   try {
     resp = await axios({
@@ -63,33 +68,55 @@ const auth = async function (code) {
   });
 };
 
-const getComments = async function (order, page) {
-  return await request({
+const getComments = (order, page): Promise<Array<IComment>> => {
+  return request({
     method: "get",
     url: "/comments",
     params: { order_key: order, page: page },
   });
 };
 
-const postComment = async function (slug, content) {
-  return await request({
+const postComment = (slug, content): Promise<IComment> => {
+  return request({
     method: "POST",
     url: "/comments",
     data: { slug, content },
   });
 };
 
-const putFavor = async function (id) {
-  return await request({
+const putFavor = ({ objType, objId }) => {
+  return request({
     method: "POST",
-    url: "/favor/" + id,
+    url: "/favor/",
+    data: { type: objType, id: objId },
   });
 };
 
-const putUnfavor = async function (id) {
-  await request({
+const putUnfavor = (favId) => {
+  request({
     method: "DELETE",
-    url: "/favor/" + id,
+    url: "/favor/" + favId,
+  });
+};
+
+const postSubComment = (commentId, content): Promise<IComment> => {
+  return request({
+    method: "POST",
+    url: "/replies",
+    data: { comment_id: commentId, content },
+  });
+};
+
+const getSubComments = (
+  comment_id,
+  order,
+  page,
+  ipp
+): Promise<Array<IComment>> => {
+  return request({
+    method: "GET",
+    url: "/replies",
+    params: { comment_id, order_key: order, page, ipp },
   });
 };
 
@@ -103,4 +130,6 @@ export default {
   postComment,
   putFavor,
   putUnfavor,
+  postSubComment,
+  getSubComments,
 };

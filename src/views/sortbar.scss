@@ -1,0 +1,95 @@
+.talkee {
+  .talkee-sort-bar {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  .talkee-sort-bar-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .talkee-sort-bar-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .talkee-sort-bar-comment-icon {
+    width: 24px;
+    height: 24px;
+    background: transparent url(./comment.svg) 0 0 no-repeat;
+    background-size: 24px;
+  }
+
+  .talkee-button.talkee-sort-button {
+    opacity: 0.5;
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 10px;
+    font-size: inherit;
+  }
+
+  .talkee-sort-prefix {
+    margin-right: 10px;
+    display: none;
+  }
+
+  .talkee-sort-icon {
+    display: inline-block;
+    margin-right: 4px;
+    width: 24px;
+    height: 24px;
+    background: transparent url(./sort.svg) 0 0 no-repeat;
+    background-size: 24px;
+  }
+
+  .talkee-button.talkee-sort-button[disabled] {
+    opacity: 1;
+    font-weight: bold;
+    color: #5a97a6;
+  }
+
+  .talkee-sort-by-id-asc-button {
+    margin-right: 0;
+  }
+
+  .talkee-button.talkee-menu-button {
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 24px;
+    border: none;
+    outline: none;
+    width: 32px;
+    margin-right: -10px;
+  }
+
+  .talkee-menu {
+    position: absolute;
+    top: 52px;
+    right: 0;
+    padding: 8px 0;
+    list-style: none;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    border-radius: 8px;
+    display: none;
+  }
+
+  .talkee-menu-item {
+    cursor: pointer;
+    display: block;
+    padding: 4px 16px;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+}

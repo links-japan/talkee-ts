@@ -2,8 +2,9 @@ import helper from "./utils/helper";
 import Base64 from "./utils/base64";
 import icons from "./icons/index";
 import apis from "./apis";
-import { API_BASE, LOGIN_URL, TWEET_BASE, DEFAULT_AVATAR } from "./constants";
 import { $t } from "./i18n";
+import views from "./views/index";
+import { API_BASE, LOGIN_URL, TWEET_BASE, DEFAULT_AVATAR } from "./constants";
 
 const $e = function (tag: string, opts: Record<string, any>) {
   const el = document.createElement(tag);
@@ -54,10 +55,8 @@ export const Talkee = function (opts: Record<string, any>) {
         myComment = await apis.postComment(this.slug, text);
       } catch (e) {
         if (e.response && e.response.status === 429) {
-          alert($t("error_comment_too_frequently"));
-          return;
+          return helper.errmsg(e);
         }
-        // console.log('err', JSON.stringify(e.response))
         helper.removeAuth();
       }
       if (myComment) {
@@ -89,7 +88,7 @@ export const Talkee = function (opts: Record<string, any>) {
     }
   };
 
-  this.applySortMethod = function (method) {
+  this.applySortMethod = (method) => {
     this.commentsContainer
       .querySelectorAll(".talkee-sort-button")
       .forEach(function (x) {
@@ -140,11 +139,11 @@ export const Talkee = function (opts: Record<string, any>) {
   };
 
   // views related
-  this.buildCommentUI = function (comment) {
+  this.buildCommentUI = function (comment, isSub = false) {
     const self = this;
     const commentCan = $e("div", {
       id: "talkee-comment-" + comment.id,
-      className: "talkee-comment",
+      className: `talkee-comment ${isSub ? "sub" : ""}`,
     });
 
     // left
@@ -219,83 +218,27 @@ export const Talkee = function (opts: Record<string, any>) {
       });
       commentContent.setAttribute("data-text", Base64.encode(comment.content));
     }
+
     commentContent.innerText = commentText;
     commentRight.appendChild(commentContent);
     if (moreButton) {
       commentRight.appendChild(moreButton);
     }
 
-    // favor & tweet
-    const metaContent = $e("div", { className: "talkee-comment-meta" });
-
-    const tweetButton = $e("button", {
-      className: "talkee-button talkee-meta-tweet-button",
-      innerText: "",
+    const metabar = new views.MetaBar(this, comment, {
+      hasReply: !isSub,
+      type: !isSub ? "comment" : "reply",
     });
-    tweetButton.style.backgroundImage = 'url("' + icons.tweetIcon + '")';
-    tweetButton.addEventListener("click", function () {
-      const commentURL = new URL(window.location.href);
-      commentURL.hash = "#talkee-anchor-comment-" + comment.id;
-      commentURL.searchParams.append("talkee_page", self.page);
-      let text = `---\n${comment.content}`;
-      if (self.tweetTags && self.tweetTags.length > 0) {
-        text += ` ${self.tweetTags.join(" ")}`;
-      }
-      const url = `${TWEET_BASE}?text=${encodeURIComponent(
-        text
-      )}&url=${encodeURIComponent(
-        commentURL.toString()
-      )}&related=LinksNewsTopics`;
-      window.open(url);
-    });
-    metaContent.appendChild(tweetButton);
+    commentRight.append(metabar.render());
 
-    const favWrapper = $e("div", {
-      className: "talkee-meta-like-button-wrapper",
-    });
-    const favCount = $e("span", { innerText: comment["favor_count"] || "" });
-    favWrapper.appendChild(favCount);
-    const favButton = $e("button", {
-      className: `talkee-button talkee-meta-like-button ${
-        comment["favored"] ? "favored" : ""
-      }`,
-      innerText: $t("like"),
-    });
+    // sub comments
+    if (!isSub) {
+      const subComments = new views.SubComments(this, comment);
+      metabar.connect(subComments);
+      commentRight.append(subComments.render());
+    }
 
-    favButton.style.backgroundImage = `url("${
-      comment["favored"] ? icons.likedIcon : icons.likeIcon
-    }")`;
-
-    favButton.addEventListener("click", function () {
-      if (!self.isSigned) {
-        const loginUrl = self.buildLoginURL();
-        window.location.href = loginUrl;
-        return;
-      }
-      if (comment["favored"]) {
-        apis.putUnfavor(comment["id"]);
-        favButton.classList.remove("favored");
-        comment["favored"] = false;
-        comment["favor_count"] -= 1;
-      } else {
-        apis.putFavor(comment["id"]);
-        favButton.classList.add("favored");
-        comment["favored"] = true;
-        comment["favor_count"] += 1;
-      }
-
-      favCount.innerText = String(comment["favor_count"] || "");
-      favButton.style.backgroundImage = `url("${
-        comment["favored"] ? icons.likedIcon : icons.likeIcon
-      }")`;
-    });
-
-    favWrapper.appendChild(favButton);
-    metaContent.appendChild(favWrapper);
-
-    commentRight.appendChild(metaContent);
-
-    commentCan.appendChild(commentRight);
+    commentCan.append(commentRight);
     return commentCan;
   };
 
@@ -320,10 +263,21 @@ export const Talkee = function (opts: Record<string, any>) {
   this.updateComments = function (comments) {
     const container = this.commentsContainer.querySelector(".talkee-comments");
     container.innerHTML = "";
+    const proc = (page) => {
+      this.page = page;
+      this.loadComments();
+      this.commentsContainer.scrollIntoView();
+    };
     if (comments && comments.length) {
       this.appendComments(container, comments);
-      // update pagination
-      this.buildPaginationUI(container, comments);
+      const pagination = new views.Pagination(this, {
+        page: this.page,
+        totalPage: this.totalPage,
+        prev: proc,
+        next: proc,
+        locate: proc,
+      });
+      container.append(pagination.render());
     } else {
       container.innerHTML = `<div class="talkee-no-comment-hint">${$t(
         "no_comment_hint"
@@ -417,157 +371,6 @@ export const Talkee = function (opts: Record<string, any>) {
     container.appendChild(editorCan);
   };
 
-  this.buildSortBarUI = function (container) {
-    const self = this;
-    const sortBar = $e("div", { className: "talkee-sort-bar" });
-    const sortBarLeft = $e("div", { className: "talkee-sort-bar-left" });
-    const sortBarCommentIcon = $e("span", {
-      className: "talkee-sort-bar-comment-icon",
-    });
-    sortBarCommentIcon.style.backgroundImage =
-      'url("' + icons.commentIcon + '")';
-    const sortBarCommentCount = $e("span", {
-      className: "talkee-sort-bar-comment-count",
-      innerText: self.total,
-    });
-
-    sortBarLeft.appendChild(sortBarCommentIcon);
-    sortBarLeft.appendChild(sortBarCommentCount);
-    sortBar.appendChild(sortBarLeft);
-
-    const sortBarRight = $e("div", { className: "talkee-sort-bar-right" });
-    const sortIcon = $e("span", { className: "talkee-sort-icon" });
-    sortIcon.style.backgroundImage = 'url("' + icons.sortIcon + '")';
-    const sortPrefix = $e("span", {
-      className: "talkee-sort-prefix",
-      innerText: "",
-    });
-    sortBarRight.appendChild(sortIcon);
-    sortBarRight.appendChild(sortPrefix);
-
-    const sortByFavButton = $e("button", {
-      className: "talkee-button talkee-sort-button talkee-sort-by-fav-button",
-      innerText: $t("sort_by_fav_button"),
-      disabled: true,
-    });
-    sortByFavButton.addEventListener("click", function () {
-      self.applySortMethod("favor_count");
-    });
-    const sortByIdButton = $e("button", {
-      className:
-        "talkee-button talkee-sort-button talkee-sort-by-id-desc-button",
-      innerText: $t("sort_by_id_desc_button"),
-    });
-    sortByIdButton.addEventListener("click", function () {
-      self.applySortMethod("id");
-    });
-    const sortByIdAscButton = $e("button", {
-      className:
-        "talkee-button talkee-sort-button talkee-sort-by-id-asc-button",
-      innerText: $t("sort_by_id_asc_button"),
-    });
-    sortByIdAscButton.addEventListener("click", function () {
-      self.applySortMethod("id-asc");
-    });
-
-    const menu = $e("ul", {
-      className: "talkee-menu",
-    });
-    const menuItemLogout = $e("li", {
-      className: "talkee-menu-item talkee-menu-item-logout",
-      innerText: $t("logout"),
-    });
-    menuItemLogout.addEventListener("click", () => {
-      helper.removeAuth();
-      window.location.reload();
-    });
-    menu.append(menuItemLogout);
-
-    const menuButton = $e("button", {
-      className: "talkee-button talkee-menu-button",
-      innerText: " ",
-    });
-    menuButton.addEventListener("click", () => {
-      if (menu.style.display === "block") {
-        menu.style.display = "none";
-      } else {
-        menu.style.display = "block";
-      }
-    });
-    menuButton.style.backgroundImage = 'url("' + icons.menuIcon + '")';
-
-    sortBarRight.appendChild(sortByFavButton);
-    sortBarRight.appendChild(sortByIdButton);
-    sortBarRight.appendChild(sortByIdAscButton);
-    if (this.isSigned) {
-      sortBarRight.appendChild(menuButton);
-      sortBarRight.appendChild(menu);
-    }
-    sortBar.appendChild(sortBarRight);
-
-    container.appendChild(sortBar);
-  };
-
-  this.buildPaginationUI = function (container, comments) {
-    const self = this;
-    // [prev] [1], [2], [3] ... [n] [next]
-    const paginationCan = $e("div", { className: "talkee-pagination" });
-    const pageIndicators = $e("div", {
-      className: "talkee-pagination-indicators",
-    });
-    const prevPageButton = $e("button", {
-      className:
-        "talkee-button talkee-pagination-button talkee-pagination-prev-button",
-      innerText: $t("prev_page"),
-    });
-    // prev
-    prevPageButton.addEventListener("click", function () {
-      self.page = Math.max(self.page - 1, 1);
-      self.loadComments();
-    });
-    if (this.page === 1) {
-      prevPageButton.style.display = "none";
-    }
-    // next
-    const nextPageButton = $e("button", {
-      className:
-        "talkee-button talkee-pagination-button talkee-pagination-next-button",
-      innerText: $t("next_page"),
-    });
-    nextPageButton.addEventListener("click", function () {
-      self.page = Math.min(self.page + 1, self.totalPage);
-      self.loadComments();
-    });
-    if (this.page === this.totalPage) {
-      nextPageButton.style.display = "none";
-    }
-    // others
-    const range = 5;
-    const prefixIndicatorCount = Math.min(this.totalPage, range);
-    const startFrom = Math.max(this.page - range, 0);
-    for (let ix = startFrom; ix < startFrom + prefixIndicatorCount; ix++) {
-      const btn = $e("button", {
-        className: `talkee-button talkee-pagination-button talkee-pagination-${
-          ix + 1
-        }-button`,
-        innerText: ix + 1,
-      }) as HTMLButtonElement;
-      if (this.page === ix + 1) {
-        btn.disabled = true;
-      }
-      btn.addEventListener("click", function () {
-        self.page = ix + 1;
-        self.loadComments();
-      });
-      pageIndicators.appendChild(btn);
-    }
-    // dots and last page
-    paginationCan.appendChild(prevPageButton);
-    paginationCan.appendChild(pageIndicators);
-    paginationCan.appendChild(nextPageButton);
-    container.appendChild(paginationCan);
-  };
-
   this.buildLoadingUI = function () {
     if (this.commentsContainer) {
       this.commentsContainer.innerHTML =
@@ -586,7 +389,8 @@ export const Talkee = function (opts: Record<string, any>) {
     }"></div>`;
 
     // build talkee sort bar
-    this.buildSortBarUI(this.commentsContainer.children[0]);
+    const sortbar = new views.SortBar(this, { total: this.total });
+    this.commentsContainer?.children[0].append(sortbar.render());
 
     // build talkee editor
     this.buildEditorUI(this.commentsContainer.children[0]);

@@ -1,4 +1,5 @@
 import { APP_TOKEN, APP_ENV } from "../constants";
+import { $t } from "../i18n";
 
 export const helper = {
   // getUrlQuery: function () {
@@ -126,6 +127,18 @@ export const helper = {
         resolve(void 0);
       });
     }
+  },
+
+  errmsg: (err) => {
+    if (err.response && err.response.status === 429) {
+      alert($t("error_comment_too_frequently"));
+      return;
+    } else if (err?.response?.data) {
+      alert(`${err?.response?.data?.code}: ${err?.response?.data?.message}`);
+      return;
+    }
+    alert($t("error_unknown"));
+    return;
   },
 };
 

@@ -4,8 +4,8 @@ WORKDIR /usr/share/nginx/html
 
 COPY . .
 ENV APP_ENV=prod
-ENV API_BASE=https://links-login-staging.getlinks.jp/api
-ENV LOGIN_BASE=https://oauth-staging.getlinks.jp
+ENV API_BASE=https://links-login.chrove.com/api
+ENV LOGIN_BASE=https://oauth.chrove.com
 ENV CLIENT_ID=bf07d6d6-4d15-46ab-b5e4-6e66fac1151e
 RUN yarn
 RUN yarn build

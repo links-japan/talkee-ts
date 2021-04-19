@@ -41,6 +41,8 @@ a {
     background: transparent;
     margin: 0 4px;
     cursor: pointer;
+    margin: 0;
+    background-color: rgba(255, 255, 255, 1);
   }
 
   .talkee-expansion-panel {
@@ -67,7 +69,7 @@ a {
     display: flex;
   }
   .talkee-editor-left {
-    flex-basis: 64px;
+    flex-basis: 58px;
   }
   .talkee-editor-right {
     flex: 1;
@@ -142,12 +144,12 @@ a {
     display: flex;
   }
   .talkee-comment-left {
-    flex-basis: 64px;
+    flex-basis: 46px;
   }
   .talkee-comment-avatar {
     margin-top: 15px;
-    height: 48px;
-    width: 48px;
+    height: 32px;
+    width: 32px;
     border-radius: 99em;
   }
   .talkee-comment-right {
@@ -195,162 +197,6 @@ a {
   .talkee-comment-content-more {
     cursor: pointer;
     line-height: 1.4;
-  }
-
-  .talkee-comment-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-left: -4px;
-  }
-
-  .talkee-meta-like-button,
-  .talkee-meta-tweet-button {
-    height: 24px;
-    background-size: 24px;
-    border: none;
-    outline: none;
-    padding: 0;
-    cursor: pointer;
-    font-size: 13px;
-    height: 24px;
-    display: inline-block;
-    min-width: 24px;
-    background-repeat: no-repeat;
-    background-position: 0 0;
-    background-color: transparent;
-  }
-
-  .talkee-meta-like-button-wrapper {
-    font-size: 13px;
-  }
-
-  .talkee-meta-like-button {
-    padding-left: 24px;
-  }
-
-  .talkee-meta-like-button {
-    color: #000;
-  }
-
-  .talkee-meta-like-button.favored {
-    opacity: 1;
-    color: #5a97a6;
-  }
-
-  .talkee-sort-bar {
-    margin-bottom: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-  }
-
-  .talkee-sort-bar-left {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
-
-  .talkee-sort-bar-right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
-  .talkee-sort-bar-comment-icon {
-    width: 24px;
-    height: 24px;
-    background: transparent url(./comment.svg) 0 0 no-repeat;
-    background-size: 24px;
-  }
-
-  .talkee-sort-button {
-    opacity: 0.5;
-    border: none;
-    outline: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-    margin-right: 10px;
-    font-size: inherit;
-  }
-
-  .talkee-sort-prefix {
-    margin-right: 10px;
-    display: none;
-  }
-
-  .talkee-sort-icon {
-    display: inline-block;
-    margin-right: 4px;
-    width: 24px;
-    height: 24px;
-    background: transparent url(./sort.svg) 0 0 no-repeat;
-    background-size: 24px;
-  }
-
-  .talkee-sort-button[disabled] {
-    opacity: 1;
-    font-weight: bold;
-    color: #5a97a6;
-  }
-
-  .talkee-sort-by-id-asc-button {
-    margin-right: 0;
-  }
-
-  .talkee-menu-button {
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 24px;
-    border: none;
-    outline: none;
-    width: 32px;
-    margin-right: -10px;
-  }
-
-  .talkee-menu {
-    position: absolute;
-    top: 52px;
-    right: 0;
-    padding: 8px 0;
-    list-style: none;
-    background: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-    border-radius: 8px;
-    display: none;
-  }
-
-  .talkee-menu-item {
-    cursor: pointer;
-    display: block;
-    padding: 4px 16px;
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-    }
-  }
-
-  .talkee-pagination {
-    display: flex;
-    justify-content: center;
-    font-size: 16px;
-  }
-  .talkee-pagination-button {
-    height: 42px;
-    padding: 8px 10px;
-    font-size: 14px;
-    border: 1px solid #e0e0e0;
-    box-sizing: border-box;
-    border-radius: 6px;
-    background: transparent;
-    margin: 0 2px;
-    cursor: pointer;
-  }
-  .talkee-pagination-button[disabled] {
-    opacity: 0.5;
-    cursor: default;
   }
 
   .talkee-no-comment-hint {
