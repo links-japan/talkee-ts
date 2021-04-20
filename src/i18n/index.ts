@@ -3,7 +3,7 @@ const defaultLocales = {
     tap_to_login: "Tap to login to comment",
     submit: "Submit",
     like: "Like",
-    reply: "Reply",
+    reply: "Responses",
     comment_placeholder: "Leave your comment here.",
     sub_comment_placeholder: "Leave your response here.",
     loading: "Loading",

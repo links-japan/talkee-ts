@@ -6,7 +6,7 @@ import "./pagination.scss";
 export default class SortBar {
   talkee: any;
 
-  element: HTMLElement | null;
+  element: HTMLElement | Element | null;
 
   totalPage: number;
   page: number;
