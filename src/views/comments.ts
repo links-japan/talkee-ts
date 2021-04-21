@@ -52,7 +52,7 @@ export default class Comments {
     };
 
     (this.ul as any).innerHTML = "";
-    if (!opts.loadSpotlight) {
+    if (!opts.keepSpotlight) {
       (this.spotlight as any).innerHTML = "";
     }
 
