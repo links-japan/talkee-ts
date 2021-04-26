@@ -2,6 +2,7 @@ import helper from "../utils/helper";
 import apis from "../apis";
 import { $e } from "../utils/dom";
 import { $t } from "../i18n";
+import EditorMask from "../views/editormask";
 
 import "./subcomments.scss";
 import { IComment } from "../types/api";
@@ -11,9 +12,9 @@ export default class SubComments {
   comment: any;
   subComments: any;
 
-  element: HTMLElement | null;
-  ul: HTMLElement | null;
-  loadMoreBtn: HTMLElement | null;
+  element: HTMLElement | Element | null;
+  ul: HTMLElement | Element | null;
+  loadMoreBtn: HTMLElement | Element | null;
 
   order: string;
   page: number;
@@ -55,7 +56,7 @@ export default class SubComments {
     }
     for (let ix = 0; ix < this.subComments.length; ix++) {
       const sc = this.subComments[ix];
-      this.ul?.append(this.talkee.buildCommentUI(sc, true));
+      this.ul?.append(this.talkee.buildCommentUI(sc, this.comment));
     }
     if (this.subComments.length) {
       (this.ul as any).show();
@@ -72,16 +73,21 @@ export default class SubComments {
     });
     subCommentsContainer.style.display = "none";
 
+    const editorWrapper = $e("div", {
+      className: "talkee-sub-comments-editor-wrapper",
+    });
+
     const subCommentsEditor = $e("textarea", {
       className: "talkee-sub-comments-editor",
       placeholder: $t("sub_comment_placeholder"),
     });
-    subCommentsContainer.appendChild(subCommentsEditor);
+    editorWrapper.appendChild(subCommentsEditor);
 
     const subCommentsSubmit = $e("button", {
       className: "talkee-button talkee-sub-comments-submit",
-      innerText: $t("reply"),
+      innerText: $t("submit"),
     });
+
     subCommentsSubmit.addEventListener("click", async () => {
       let resp: IComment | any = null;
       try {
@@ -94,19 +100,27 @@ export default class SubComments {
         helper.errmsg(e);
         return;
       }
-      this.ul?.prepend(this.talkee.buildCommentUI(resp, true));
+      this.ul?.prepend(this.talkee.buildCommentUI(resp, this.comment));
       (this.ul as any).show();
       (subCommentsEditor as any).value = "";
     });
-    subCommentsContainer.appendChild(subCommentsSubmit);
+    editorWrapper.appendChild(subCommentsSubmit);
+
+    if (!this.talkee.isSigned) {
+      const editorMask = new EditorMask(this, {
+        siteId: this.talkee.siteId,
+        slug: this.talkee.slug,
+        loginUrl: this.talkee.loginUrl,
+      });
+      editorWrapper.appendChild(editorMask.render());
+    }
+
+    subCommentsContainer.appendChild(editorWrapper);
 
     const subCommentsUl = $e("ul", {
       className: "talkee-sub-comments-ul",
     });
 
-    // [1, 2, 3].forEach(() => {
-    //   subCommentsUl.append(this.talkee.buildCommentUI(this.comment, true));
-    // });
     subCommentsUl.style.display = "none";
 
     subCommentsContainer.appendChild(subCommentsUl);

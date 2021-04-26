@@ -68,7 +68,7 @@ export const helper = {
     let url = window.location.href
       .replace(/code=[a-z0-9A-Z]+/, "code=")
       .replace(/state=[a-z0-9A-Z]+/, "state=");
-    if (!url.includes("#talkee-anchor")) {
+    if (!url.includes("#talkee-")) {
       url += "#talkee-anchor";
     }
     return localStorage.setItem("talkee-redirect-url", url);

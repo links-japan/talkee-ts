@@ -3,7 +3,10 @@
     border-radius: 4px;
     margin: 12px 0;
     padding: 12px;
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: #f8fafc;
+    .talkee-sub-comments-editor-wrapper {
+      position: relative;
+    }
     .talkee-sub-comments-editor {
       margin-bottom: 8px;
       border: none;

@@ -68,6 +68,13 @@ const auth = async function (code) {
   });
 };
 
+const getComment = (id): Promise<IComment> => {
+  return request({
+    method: "get",
+    url: "/comment/" + id,
+  });
+};
+
 const getComments = (order, page): Promise<Array<IComment>> => {
   return request({
     method: "get",
@@ -126,6 +133,7 @@ export default {
   request,
   getMe,
   auth,
+  getComment,
   getComments,
   postComment,
   putFavor,

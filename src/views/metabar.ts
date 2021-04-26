@@ -9,17 +9,17 @@ import "./metabar.scss";
 export default class Metabar {
   talkee: any;
   comment: any;
-  element: HTMLElement | null;
+  father: any;
+  element: HTMLElement | Element | null;
   subcommentsCom: any;
-  hasReply: boolean;
   type: string;
 
-  constructor(talkee: any, comment: any, opts: any) {
+  constructor(talkee: any, opts: any) {
     this.talkee = talkee;
-    this.comment = comment;
+    this.comment = opts.comment;
+    this.father = opts.father || null;
     this.element = null;
     this.subcommentsCom = null;
-    this.hasReply = opts.hasReply === true;
     this.type = opts.type || "comment";
   }
 
@@ -31,16 +31,18 @@ export default class Metabar {
     const metaContent = $e("div", { className: "talkee-comment-meta" });
 
     // reply button
-    if (this.hasReply) {
+    if (this.father === null) {
       const replyWrapper = $e("div", {
         className: "talkee-meta-reply-button-wrapper",
       });
 
       const replyButton = $e("button", {
         className: `talkee-button talkee-meta-reply-button`,
-        innerText:
-          $t("reply") +
-          `${this.comment.reply_count ? ` (${this.comment.reply_count})` : ""}`,
+        innerText: `${
+          this.comment.reply_count
+            ? `${this.comment.reply_count}` + $t("reply")
+            : $t("click_to_reply")
+        }`,
       });
 
       replyButton.addEventListener("click", async () => {
@@ -118,8 +120,11 @@ export default class Metabar {
     tweetButton.style.backgroundImage = 'url("' + icons.tweetIcon + '")';
     tweetButton.addEventListener("click", () => {
       const commentURL = new URL(window.location.href);
-      commentURL.hash = "#talkee-anchor-comment-" + this.comment.id;
-      commentURL.searchParams.append("talkee_page", this.talkee.page);
+      commentURL.hash = `#talkee-comment-${this.comment.id}`;
+      if (this.father) {
+        commentURL.hash = `#talkee-comment-${this.father.id}-reply-${this.comment.id}`;
+      }
+
       let text = `---\n${this.comment.content}`;
       if (this.talkee.tweetTags && this.talkee.tweetTags.length > 0) {
         text += ` ${this.talkee.tweetTags.join(" ")}`;
