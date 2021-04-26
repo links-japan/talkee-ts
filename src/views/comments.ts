@@ -84,7 +84,7 @@ export default class Comments {
     // fetch the comment, and append it to the top
     const comment: any = await apis.getComment(commentId);
     this.spotlight?.append(this.talkee.buildCommentUI(comment, null));
-    this.element?.scrollIntoView();
+    this.talkee.commentsContainer?.scrollIntoView();
   }
 
   prepend(comments) {
