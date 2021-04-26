@@ -107,10 +107,11 @@ export const Talkee = function (opts: Record<string, any>) {
       ).disabled = true;
     }
     this.sortMethod = method;
-    await this.components.comments.reload({
+    const resp = await this.components.comments.reload({
       order: method,
       keepSpotlight,
     });
+    this.components.sortbar.setProps({ total: resp.total });
   };
 
   // views related
@@ -303,8 +304,10 @@ export const Talkee = function (opts: Record<string, any>) {
     }"></div>`;
 
     // build talkee sort bar
-    const sortbar = new views.SortBar(this, { total: this.total });
-    this.commentsContainer?.children[0].append(sortbar.render());
+    this.components.sortbar = new views.SortBar(this, { total: this.total });
+    this.commentsContainer?.children[0].append(
+      this.components.sortbar.render()
+    );
 
     // build talkee editor
     this.buildEditorUI(this.commentsContainer.children[0]);

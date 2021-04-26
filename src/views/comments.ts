@@ -77,7 +77,7 @@ export default class Comments {
         "no_comment_hint"
       )}</div>`;
     }
-    return 0;
+    return ret;
   }
 
   async locate(commentId) {

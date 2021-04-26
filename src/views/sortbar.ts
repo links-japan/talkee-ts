@@ -19,6 +19,12 @@ export default class SortBar {
     this.total = opts.total || 0;
   }
 
+  setProps(props) {
+    this.total = props?.total || 0;
+    const count = this.element?.querySelector(".talkee-sort-bar-comment-count");
+    (count as any).innerText = this.total;
+  }
+
   render() {
     const sortBar = $e("div", { className: "talkee-sort-bar" });
     const sortBarLeft = $e("div", { className: "talkee-sort-bar-left" });
