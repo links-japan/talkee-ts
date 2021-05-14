@@ -19,21 +19,57 @@ const $e = function (tag: string, opts: Record<string, any>) {
 };
 
 // Talkee contructor
-export const Talkee = function (opts: Record<string, any>) {
-  this.editorArea = null;
-  this.repliedCommentId = null;
-  this.repliedUserId = null;
-  this.apiBase = "";
-  this.slug = "";
-  this.isSigned = false;
-  this.sortMethod = "favor_count";
-  this.page = 1;
-  this.total = 0;
-  this.itemPerPage = 10;
-  this.totalPage = 1;
-  this.components = {};
+export class Talkee {
+  static getUrlQuery = helper.getUrlQuery;
 
-  this.auth = async function (code) {
+  private editorArea: HTMLElement | null;
+  private repliedCommentId: string | null;
+  private repliedUserId: string | null;
+  private apiBase: string;
+  private slug: string;
+  private isSigned: boolean;
+  private sortMethod: string;
+  private page: number;
+  private total: number;
+  private itemPerPage: number;
+  private totalPage: number;
+  private components: Record<string, any>;
+  private container: null | HTMLElement;
+  private profile: null | Record<string, any>;
+  private loginUrl: string;
+  private siteId: string;
+  private tweetTags: any[];
+  private expandable: boolean;
+  private defaultAvatarUrl: string;
+  private opts: Record<string, any>;
+  constructor(opts: Record<string, any>) {
+    this.opts = opts;
+    this.editorArea = null;
+    this.repliedCommentId = null;
+    this.repliedUserId = null;
+    this.apiBase = "";
+    this.slug = "";
+    this.isSigned = false;
+    this.sortMethod = "favor_count";
+    this.page = 1;
+    this.total = 0;
+    this.itemPerPage = 10;
+    this.totalPage = 1;
+    this.components = {};
+    this.container = null;
+    this.profile = null;
+    this.loginUrl = "";
+    this.siteId = "";
+    this.tweetTags = [];
+    this.expandable = false;
+    this.defaultAvatarUrl = "";
+
+    setTimeout(() => {
+      this.init();
+    }, 200);
+  }
+
+  public auth = async (code) => {
     try {
       await apis.auth(code);
       // redirect if possible
@@ -48,9 +84,12 @@ export const Talkee = function (opts: Record<string, any>) {
     }
   };
 
-  this.sendComment = async function () {
-    const area = this.container.querySelector(".textarea");
-    const text = area.value.trim();
+  public sendComment = async () => {
+    if (!this.container) return;
+    const area = this.container.querySelector(
+      ".textarea"
+    ) as HTMLTextAreaElement;
+    const text = area?.value.trim();
     if (text.length !== 0) {
       let myComment: any = null;
       try {
@@ -65,15 +104,19 @@ export const Talkee = function (opts: Record<string, any>) {
         area.value = "";
         area.style.height = "5px";
         myComment.creator = this.profile;
-        this.components.comments.prepend([myComment]);
+        this.components.comments.prepend([myComment] as any);
       }
     }
   };
 
-  // controller methods
-  this.checkTextareaStatus = function (area) {
-    const btn = this.container.querySelector(".talkee-editor-submit");
-    const hint = this.container.querySelector(".talkee-editor-hint");
+  public checkTextareaStatus = (area) => {
+    const btn = this.container?.querySelector(
+      ".talkee-editor-submit"
+    ) as HTMLButtonElement;
+    const hint = this.container?.querySelector(
+      ".talkee-editor-hint"
+    ) as HTMLElement;
+    if (!btn || !hint) return;
     if (area.value.trim().length === 0 || area.value.trim().length > 512) {
       btn.disabled = true;
       if (area.value.trim().length > 512) {
@@ -87,35 +130,40 @@ export const Talkee = function (opts: Record<string, any>) {
     }
   };
 
-  this.applySortMethod = async (method, keepSpotlight = false) => {
+  public applySortMethod = async (method, keepSpotlight = false) => {
     this.container
-      .querySelectorAll(".talkee-sort-button")
-      .forEach(function (x) {
+      ?.querySelectorAll(".talkee-sort-button")
+      .forEach(function (x: any) {
         x.disabled = false;
       });
     if (method === "id") {
-      this.container.querySelector(
-        ".talkee-sort-by-id-desc-button"
+      (
+        this.container?.querySelector(
+          ".talkee-sort-by-id-desc-button"
+        ) as HTMLButtonElement
       ).disabled = true;
     } else if (method === "id-asc") {
-      this.container.querySelector(
-        ".talkee-sort-by-id-asc-button"
+      (
+        this.container?.querySelector(
+          ".talkee-sort-by-id-asc-button"
+        ) as HTMLButtonElement
       ).disabled = true;
     } else {
-      this.container.querySelector(
-        ".talkee-sort-by-fav-button"
+      (
+        this.container?.querySelector(
+          ".talkee-sort-by-fav-button"
+        ) as HTMLButtonElement
       ).disabled = true;
     }
     this.sortMethod = method;
-    const resp = await this.components.comments.reload({
+    const resp = await (this.components.comments as any).reload({
       order: method,
       keepSpotlight,
     });
-    this.components.sortbar.setProps({ total: resp.total });
+    (this.components.sortbar as any).setProps({ total: resp.total });
   };
 
-  // views related
-  this.buildCommentUI = function (comment, fatherComment = null) {
+  public buildCommentUI = (comment, fatherComment = null) => {
     const self = this;
     const commentCan = $e("div", {
       id: "talkee-comment-" + comment.id,
@@ -219,7 +267,7 @@ export const Talkee = function (opts: Record<string, any>) {
     return commentCan;
   };
 
-  this.buildEditorUI = function (container) {
+  public buildEditorUI = (container) => {
     const self = this;
     const editorCan = $e("div", { className: "talkee-editor" });
     // left
@@ -241,6 +289,7 @@ export const Talkee = function (opts: Record<string, any>) {
       placeholder: $t("comment_placeholder"),
     });
     editorArea.addEventListener("input", function (e) {
+      if (!self.editorArea) return;
       self.editorArea.style.height = "5px";
       self.editorArea.style.height = self.editorArea.scrollHeight + "px";
     });
@@ -287,7 +336,7 @@ export const Talkee = function (opts: Record<string, any>) {
     container.appendChild(editorCan);
   };
 
-  this.buildLoadingUI = function () {
+  public buildLoadingUI = () => {
     if (this.container) {
       this.container.innerHTML =
         '<div class="talkee">' +
@@ -298,7 +347,9 @@ export const Talkee = function (opts: Record<string, any>) {
     }
   };
 
-  this.buildTalkeeUI = () => {
+  public buildTalkeeUI = () => {
+    if (!this.container) return;
+
     this.container.innerHTML = `<div class="talkee ${
       this.expandable ? "expandable" : ""
     }"></div>`;
@@ -320,7 +371,7 @@ export const Talkee = function (opts: Record<string, any>) {
       expanded: this.expandable,
       expand: () => {
         this.expandable = false;
-        this.container.children[0].classList.remove("expandable");
+        this.container?.children[0].classList.remove("expandable");
         (expansion.element as any).style.display = "none";
       },
     });
@@ -328,7 +379,8 @@ export const Talkee = function (opts: Record<string, any>) {
     this.container?.children[0].append(expansion.render());
   };
 
-  this.init = async function () {
+  private init = async () => {
+    const opts = this.opts;
     console.log("talkee options:", opts);
 
     this.apiBase = opts.apiBase || API_BASE;
@@ -343,7 +395,7 @@ export const Talkee = function (opts: Record<string, any>) {
     apis.setDefaultParams({ site_id: this.siteId, slug: this.slug });
 
     this.container = opts.commentSelector;
-    if (this.container.constructor === String) {
+    if (this.container?.constructor === String) {
       this.container = document.querySelector(this.container);
     }
 
@@ -383,7 +435,7 @@ export const Talkee = function (opts: Record<string, any>) {
             await this.components.comments.expand();
           }
         } else {
-          this.container.scrollIntoView();
+          this.container?.scrollIntoView();
         }
       }, 1000);
     }
@@ -398,12 +450,7 @@ export const Talkee = function (opts: Record<string, any>) {
       this.applySortMethod(this.sortMethod, true);
     }, 200);
   };
-
-  setTimeout(() => {
-    this.init();
-  }, 200);
-};
+}
 
 Talkee.getUrlQuery = helper.getUrlQuery;
-
 export default Talkee;
