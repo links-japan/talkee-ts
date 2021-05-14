@@ -1,11 +1,11 @@
-import helper from './utils/helper';
-import Base64 from './utils/base64';
-import icons from './icons/index';
-import apis from './apis';
-import { $t } from './i18n';
-import views from './views/index';
-import { API_BASE, LOGIN_URL, DEFAULT_AVATAR } from './constants';
-import _ from 'lodash';
+import helper from "./utils/helper";
+import Base64 from "./utils/base64";
+import icons from "./icons/index";
+import apis from "./apis";
+import { $t } from "./i18n";
+import views from "./views/index";
+import { API_BASE, LOGIN_URL, DEFAULT_AVATAR } from "./constants";
+import _ from "lodash";
 
 const $e = function (tag: string, opts: Record<string, any>) {
   const el = document.createElement(tag);
@@ -47,10 +47,10 @@ export class Talkee {
     this.editorArea = null;
     this.repliedCommentId = null;
     this.repliedUserId = null;
-    this.apiBase = '';
-    this.slug = '';
+    this.apiBase = "";
+    this.slug = "";
     this.isSigned = false;
-    this.sortMethod = 'favor_count';
+    this.sortMethod = "favor_count";
     this.page = 1;
     this.total = 0;
     this.itemPerPage = 10;
@@ -58,11 +58,11 @@ export class Talkee {
     this.components = {};
     this.container = null;
     this.profile = null;
-    this.loginUrl = '';
-    this.siteId = '';
+    this.loginUrl = "";
+    this.siteId = "";
     this.tweetTags = [];
     this.expandable = false;
-    this.defaultAvatarUrl = '';
+    this.defaultAvatarUrl = "";
 
     setTimeout(() => {
       this.init();
@@ -76,10 +76,10 @@ export class Talkee {
       const me: any = await apis.getMe();
       helper.setProfile(me);
     } catch (e) {
-      console.log('failed to auth', e);
+      console.log("failed to auth", e);
     }
     if (helper.getRedirect()) {
-      window.location.replace(helper.getRedirect() ?? '');
+      window.location.replace(helper.getRedirect() ?? "");
       return;
     }
   };
@@ -87,7 +87,7 @@ export class Talkee {
   public sendComment = async () => {
     if (!this.container) return;
     const area = this.container.querySelector(
-      '.textarea'
+      ".textarea"
     ) as HTMLTextAreaElement;
     const text = area?.value.trim();
     if (text.length !== 0) {
@@ -101,8 +101,8 @@ export class Talkee {
         helper.removeAuth();
       }
       if (myComment) {
-        area.value = '';
-        area.style.height = '5px';
+        area.value = "";
+        area.style.height = "5px";
         myComment.creator = this.profile;
         this.components.comments.prepend([myComment] as any);
       }
@@ -111,47 +111,47 @@ export class Talkee {
 
   public checkTextareaStatus = (area) => {
     const btn = this.container?.querySelector(
-      '.talkee-editor-submit'
+      ".talkee-editor-submit"
     ) as HTMLButtonElement;
     const hint = this.container?.querySelector(
-      '.talkee-editor-hint'
+      ".talkee-editor-hint"
     ) as HTMLElement;
     if (!btn || !hint) return;
     if (area.value.trim().length === 0 || area.value.trim().length > 512) {
       btn.disabled = true;
       if (area.value.trim().length > 512) {
-        hint.style.visibility = 'visible';
+        hint.style.visibility = "visible";
       } else {
-        hint.style.visibility = 'hidden';
+        hint.style.visibility = "hidden";
       }
     } else {
       btn.disabled = false;
-      hint.style.visibility = 'hidden';
+      hint.style.visibility = "hidden";
     }
   };
 
   public applySortMethod = async (method, keepSpotlight = false) => {
     this.container
-      ?.querySelectorAll('.talkee-sort-button')
+      ?.querySelectorAll(".talkee-sort-button")
       .forEach(function (x: any) {
         x.disabled = false;
       });
-    if (method === 'id') {
+    if (method === "id") {
       (
         this.container?.querySelector(
-          '.talkee-sort-by-id-desc-button'
+          ".talkee-sort-by-id-desc-button"
         ) as HTMLButtonElement
       ).disabled = true;
-    } else if (method === 'id-asc') {
+    } else if (method === "id-asc") {
       (
         this.container?.querySelector(
-          '.talkee-sort-by-id-asc-button'
+          ".talkee-sort-by-id-asc-button"
         ) as HTMLButtonElement
       ).disabled = true;
     } else {
       (
         this.container?.querySelector(
-          '.talkee-sort-by-fav-button'
+          ".talkee-sort-by-fav-button"
         ) as HTMLButtonElement
       ).disabled = true;
     }
@@ -165,53 +165,53 @@ export class Talkee {
 
   public buildCommentUI = (comment, fatherComment = null) => {
     const self = this;
-    const commentCan = $e('div', {
-      id: 'talkee-comment-' + comment.id,
-      className: `talkee-comment ${fatherComment ? 'sub' : ''}`,
+    const commentCan = $e("div", {
+      id: "talkee-comment-" + comment.id,
+      className: `talkee-comment ${fatherComment ? "sub" : ""}`,
     });
 
     // left
-    const commentLeft = $e('div', { className: 'talkee-comment-left' });
+    const commentLeft = $e("div", { className: "talkee-comment-left" });
 
     // avatar
-    const commentAvatar = $e('img', {
-      className: 'talkee-comment-avatar',
-      src: comment.creator['avatar_url'] || self.defaultAvatarUrl,
+    const commentAvatar = $e("img", {
+      className: "talkee-comment-avatar",
+      src: comment.creator["avatar_url"] || self.defaultAvatarUrl,
     });
     commentLeft.appendChild(commentAvatar);
     commentCan.appendChild(commentLeft);
 
     // right
-    const commentRight = $e('div', { className: 'talkee-comment-right' });
+    const commentRight = $e("div", { className: "talkee-comment-right" });
 
     // right top
-    const commentRT = $e('div', { className: 'talkee-comment-right-top' });
+    const commentRT = $e("div", { className: "talkee-comment-right-top" });
 
     // right top > name
-    const commentName = $e('a', {
-      className: 'talkee-comment-name surprise',
-      innerText: comment.creator['full_name'],
+    const commentName = $e("a", {
+      className: "talkee-comment-name surprise",
+      innerText: comment.creator["full_name"],
     });
 
     // right top > time
-    const commentTime = $e('span', {
-      className: 'talkee-comment-time',
-      innerText: helper.formatTime(comment['created_at']),
+    const commentTime = $e("span", {
+      className: "talkee-comment-time",
+      innerText: helper.formatTime(comment["created_at"]),
     });
     commentRT.appendChild(commentName);
     commentRT.appendChild(commentTime);
 
     if (comment.reward && comment.reward.amount) {
-      const commentReward = $e('span', {
+      const commentReward = $e("span", {
         className: `talkee-comment-reward`,
       });
-      const commentRewardIcon = $e('span', {
-        className: 'talkee-comment-reward-icon',
+      const commentRewardIcon = $e("span", {
+        className: "talkee-comment-reward-icon",
       });
       commentRewardIcon.style.backgroundImage =
         'url("' + icons.badgeIcon + '")';
-      const commentRewardText = $e('span', {
-        className: 'talkee-comment-reward-text',
+      const commentRewardText = $e("span", {
+        className: "talkee-comment-reward-text",
         innerText: `${comment.reward.amount} Satoshi`,
       });
 
@@ -223,24 +223,24 @@ export class Talkee {
     commentRight.appendChild(commentRT);
 
     // content
-    const commentContent = $e('div', { className: 'talkee-comment-content' });
-    let commentText: string = '';
+    const commentContent = $e("div", { className: "talkee-comment-content" });
+    let commentText: string = "";
     let moreButton: any = null;
     if (comment.content.length < 160) {
       commentText = helper.parseText(comment.content);
     } else {
       commentText = helper.parseText(comment.content.slice(0, 160));
-      moreButton = $e('a', {
-        className: 'talkee-comment-content-more',
-        innerText: $t('content_more'),
+      moreButton = $e("a", {
+        className: "talkee-comment-content-more",
+        innerText: $t("content_more"),
       });
-      moreButton.addEventListener('click', () => {
+      moreButton.addEventListener("click", () => {
         commentContent.innerText = helper.parseText(
-          Base64.decode(commentContent.getAttribute('data-text') as string)
+          Base64.decode(commentContent.getAttribute("data-text") as string)
         );
-        moreButton.style.display = 'none';
+        moreButton.style.display = "none";
       });
-      commentContent.setAttribute('data-text', Base64.encode(comment.content));
+      commentContent.setAttribute("data-text", Base64.encode(comment.content));
     }
 
     commentContent.innerText = commentText;
@@ -252,7 +252,7 @@ export class Talkee {
     const metabar = new views.MetaBar(this, {
       comment: comment,
       father: fatherComment,
-      type: fatherComment ? 'reply' : 'comment',
+      type: fatherComment ? "reply" : "comment",
     });
     commentRight.append(metabar.render());
 
@@ -269,12 +269,12 @@ export class Talkee {
 
   public buildEditorUI = (container) => {
     const self = this;
-    const editorCan = $e('div', { className: 'talkee-editor' });
+    const editorCan = $e("div", { className: "talkee-editor" });
     // left
-    const editorLeft = $e('div', { className: 'talkee-editor-left' });
+    const editorLeft = $e("div", { className: "talkee-editor-left" });
     // avatar
-    const editorAvatar = $e('img', {
-      className: 'talkee-editor-avatar',
+    const editorAvatar = $e("img", {
+      className: "talkee-editor-avatar",
       src: this.profile
         ? this.profile.avatar_url || self.defaultAvatarUrl
         : self.defaultAvatarUrl,
@@ -283,40 +283,40 @@ export class Talkee {
     editorCan.appendChild(editorLeft);
 
     // .talkee-editor > editor area
-    const editorRight = $e('div', { className: 'talkee-editor-right' });
-    const editorArea = $e('textarea', {
-      className: 'talkee-editor-area textarea',
-      placeholder: $t('comment_placeholder'),
+    const editorRight = $e("div", { className: "talkee-editor-right" });
+    const editorArea = $e("textarea", {
+      className: "talkee-editor-area textarea",
+      placeholder: $t("comment_placeholder"),
     });
-    editorArea.addEventListener('input', function (e) {
+    editorArea.addEventListener("input", function (e) {
       if (!self.editorArea) return;
-      self.editorArea.style.height = '5px';
-      self.editorArea.style.height = self.editorArea.scrollHeight + 'px';
+      self.editorArea.style.height = "5px";
+      self.editorArea.style.height = self.editorArea.scrollHeight + "px";
     });
-    editorArea.addEventListener('input', function () {
+    editorArea.addEventListener("input", function () {
       self.checkTextareaStatus(editorArea);
     });
-    editorArea.addEventListener('propertychange', function () {
+    editorArea.addEventListener("propertychange", function () {
       self.checkTextareaStatus(editorArea);
     });
-    editorArea.addEventListener('blur', function () {
+    editorArea.addEventListener("blur", function () {
       self.checkTextareaStatus(editorArea);
     });
     editorRight.appendChild(editorArea);
     this.editorArea = editorArea;
 
-    const editorCtrl = $e('div', { className: 'talkee-editor-ctrl' });
-    const editorSubmit = $e('button', {
-      className: 'talkee-editor-submit',
-      innerText: $t('submit'),
+    const editorCtrl = $e("div", { className: "talkee-editor-ctrl" });
+    const editorSubmit = $e("button", {
+      className: "talkee-editor-submit",
+      innerText: $t("submit"),
       disabled: true,
     });
-    editorSubmit.addEventListener('click', function () {
+    editorSubmit.addEventListener("click", function () {
       self.sendComment();
     });
-    const hint = $e('div', {
-      className: 'talkee-editor-hint',
-      innerText: $t('too_many_charactors'),
+    const hint = $e("div", {
+      className: "talkee-editor-hint",
+      innerText: $t("too_many_charactors"),
     });
     editorCtrl.appendChild(hint);
     editorCtrl.appendChild(editorSubmit);
@@ -341,9 +341,9 @@ export class Talkee {
       this.container.innerHTML =
         '<div class="talkee">' +
         '<div class="talkee-loading>' +
-        $t('loading') +
-        '</div>' +
-        '</div>';
+        $t("loading") +
+        "</div>" +
+        "</div>";
     }
   };
 
@@ -351,7 +351,7 @@ export class Talkee {
     if (!this.container) return;
 
     this.container.innerHTML = `<div class="talkee ${
-      this.expandable ? 'expandable' : ''
+      this.expandable ? "expandable" : ""
     }"></div>`;
 
     // build talkee sort bar
@@ -371,8 +371,8 @@ export class Talkee {
       expanded: this.expandable,
       expand: () => {
         this.expandable = false;
-        this.container?.children[0].classList.remove('expandable');
-        (expansion.element as any).style.display = 'none';
+        this.container?.children[0].classList.remove("expandable");
+        (expansion.element as any).style.display = "none";
       },
     });
     this.components.expansion = expansion;
@@ -381,7 +381,7 @@ export class Talkee {
 
   private init = async () => {
     const opts = this.opts;
-    console.log('talkee options:', opts);
+    console.log("talkee options:", opts);
 
     this.apiBase = opts.apiBase || API_BASE;
     this.loginUrl = opts.loginUrl || LOGIN_URL;
@@ -412,14 +412,14 @@ export class Talkee {
     // redirect to
     if (
       window.location.hash &&
-      window.location.hash.indexOf('#talkee-') === 0
+      window.location.hash.indexOf("#talkee-") === 0
     ) {
       // talkee hash detected, try to find the position of the comment or reply
       setTimeout(async () => {
         const m1 = /talkee-comment-(\d+)/.exec(window.location.hash);
         const m2 = /talkee-comment-\d+-reply-(\d+)/.exec(window.location.hash);
-        let commentId = '',
-          replyId = '';
+        let commentId = "",
+          replyId = "";
         if (m1 && m1.length > 1) {
           commentId = m1[1];
           if (m2 && m2.length > 1) {
@@ -430,7 +430,7 @@ export class Talkee {
           this.components.expansion.expand();
           // fetch the comment and prepend to the list
           await this.components.comments.locate(commentId);
-          if (replyId !== '') {
+          if (replyId !== "") {
             // also expand the responses
             await this.components.comments.expand();
           }
