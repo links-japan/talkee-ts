@@ -6,7 +6,9 @@
   "module": "es/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "build": "rm -rf umd/* && omni build",
+    "build:rm": "rm -rf umd/*",
+    "build:dev": "npm run build:rm && omni build -n -c './rollup.config.dev.js'",
+    "build": "npm run build:rm && omni build",
     "release": "omni release"
   },
   "repository": {
@@ -25,7 +27,7 @@
     "@babel/preset-env": "^7.13.12",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime-corejs3": "^7.13.10",
-    "@omni-door/cli": "^2.3.11",
+    "@omni-door/cli": "^2.4.2",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-image": "^2.0.6",

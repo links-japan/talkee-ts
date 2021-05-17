@@ -63,7 +63,7 @@ module.exports = function (config) {
     ],
     plugins: defaultPlugins,
   });
-
+  console.log(123, process.env.APP_ENV);
   config.forEach((v, k) => {
     v.plugins.push(
       scss(),

@@ -897,10 +897,10 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@omni-door/cli@^2.3.11":
-  version "2.3.11"
-  resolved "https://registry.yarnpkg.com/@omni-door/cli/-/cli-2.3.11.tgz#1b28f4ecfc7d0942c4f83828312d39d18af0ab33"
-  integrity sha512-5FvKSoeCz4K0WuGpjPSJAw+lk82VlXk05spY1uBJVXYF3QXfOtr3dCFRkToyDLPMJSKki556yK8FbpqwFbT0lw==
+"@omni-door/cli@^2.4.2":
+  version "2.4.2"
+  resolved "https://registry.npmjs.org/@omni-door/cli/-/cli-2.4.2.tgz#3973cc7268e9570c8408ee7298c780fac8d9a519"
+  integrity sha512-Hjl6pR7IqEWTOwsNKwKC4N4vRqkZY+jHuLobabuIrLfOswrGU5YeeRyCJTOqnaXTdnVkTwHg8wuSOOI5nJ7+YQ==
   dependencies:
     "@omni-door/utils" "~1.2.5"
     "@types/express" "4.17.8"

@@ -14,6 +14,12 @@ yarn
 yarn build
 ```
 
+### build for dev
+
+```shell
+yarn build:dev
+```
+
 ## publish npm package
 
 ```shell
