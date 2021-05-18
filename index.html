@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,21 +9,27 @@
 
   <script src="./umd/talkee.min.latest.js"></script>
 
-  <link rel="stylesheet" href="./src/themes/talkee-theme-coinpost.css"></link>
+  <link rel="stylesheet" href="./umd/talkee.min.latest.css">
+  </link>
+
+  <link rel="stylesheet" href="./src/themes/talkee-theme-coinpost.css">
+  </link>
 
   <style>
-    html, body {
+    html,
+    body {
       font-family: "Hiragino Kaku Gothic Pro", "Hiragino", Arial, Helvetica, sans-serif;
     }
   </style>
 </head>
+
 <body onload="loaded()">
   <div style="margin: 0 auto; max-width: 800px;">
     <p style="padding: 20px; line-height: 1.5; margin-bottom: 10px;">
-      Please append post slug in the url, e.g. by default, in the url<br/>
+      Please append post slug in the url, e.g. by default, in the url<br />
       <code>http://localhost:8084/?p=<em>1234</em></code>,</br>
       the slug is 1234.
-      <br/>
+      <br />
       current query: <span class="current-query"></span>
     </p>
 
@@ -51,8 +58,14 @@
         // identitySelector: '#links-login',     // selector for identity.
         // apiBase: apiBase,                     // alternative apiBase.
         // loginUrl: loginUrl,                   // alternative login url.
+        // render UI
+        render: {
+          metabar: true,
+          subcomment: false
+        }
       })
     }
   </script>
 </body>
+
 </html>

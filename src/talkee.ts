@@ -41,8 +41,10 @@ export class Talkee {
   private tweetTags: any[];
   private expandable: boolean;
   private defaultAvatarUrl: string;
-  private opts: Record<string, any>;
-  constructor(opts: Record<string, any>) {
+
+  public opts: Record<string, any>;
+
+  public constructor(opts: Record<string, any>) {
     this.opts = opts;
     this.editorArea = null;
     this.repliedCommentId = null;
@@ -76,7 +78,7 @@ export class Talkee {
       const me: any = await apis.getMe();
       helper.setProfile(me);
     } catch (e) {
-      console.log("failed to auth", e);
+      console.error("failed to auth", e);
     }
     if (helper.getRedirect()) {
       window.location.replace(helper.getRedirect() ?? "");
@@ -249,17 +251,23 @@ export class Talkee {
       commentRight.appendChild(moreButton);
     }
 
-    const metabar = new views.MetaBar(this, {
-      comment: comment,
-      father: fatherComment,
-      type: fatherComment ? "reply" : "comment",
-    });
-    commentRight.append(metabar.render());
+    const { subcomment = true, metabar: renderMetaBar = true } =
+      this?.opts?.render ?? {};
+
+    let metabar;
+    if (renderMetaBar) {
+      metabar = new views.MetaBar(this, {
+        comment: comment,
+        father: fatherComment,
+        type: fatherComment ? "reply" : "comment",
+      });
+      commentRight.append(metabar.render());
+    }
 
     // sub comments
-    if (fatherComment === null) {
+    if (fatherComment === null && subcomment) {
       const subComments = new views.SubComments(this, comment);
-      metabar.connect(subComments);
+      metabar?.connect(subComments);
       commentRight.append(subComments.render());
     }
 

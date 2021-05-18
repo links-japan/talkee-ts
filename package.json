@@ -6,7 +6,7 @@
   "module": "es/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "dev": "nodemon --watch src -e js,ts,jsx,tsx,json,css,scss -x 'npm run dev:run'",
+    "dev": "nodemon --watch src --watch .env --watch server.js -e js,ts,jsx,tsx,json,css,scss -x 'npm run dev:run'",
     "dev:run": "npm run build:rm && npm run build:dev && npm run server",
     "server": "node server.js",
     "build:rm": "rm -rf umd/*",
@@ -30,7 +30,7 @@
     "@babel/preset-env": "^7.13.12",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime-corejs3": "^7.13.10",
-    "@omni-door/cli": "^2.4.2",
+    "@omni-door/cli": "^2.4.3",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-image": "^2.0.6",
@@ -51,6 +51,7 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
+    "@foxone/mixin-sdk-jsbridge": "^0.1.5",
     "axios": "^0.21.1",
     "lodash": "^4.17.21"
   }

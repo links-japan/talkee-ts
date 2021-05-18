@@ -47,13 +47,6 @@ module.exports = function (config) {
     input: "src/index.ts",
     output: [
       {
-        file: `umd/talkee.min.${pkj.version.replace(/\./g, "-")}.js`,
-        format: "umd",
-        name: "Talkee",
-        exports: "default",
-        compact: true,
-      },
-      {
         file: `umd/talkee.min.latest.js`,
         format: "umd",
         name: "Talkee",
