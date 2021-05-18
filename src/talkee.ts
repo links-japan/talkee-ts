@@ -52,7 +52,7 @@ export class Talkee {
     this.isSigned = false;
     this.sortMethod = "favor_count";
     this.page = 1;
-    this.total = 0;
+    this.total = 10;
     this.itemPerPage = 10;
     this.totalPage = 1;
     this.components = {};

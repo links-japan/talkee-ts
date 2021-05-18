@@ -2,6 +2,8 @@
 
 run `python -m http.server 8084` in the directory and visit http://localhost:8084
 
+or just run `yarn dev`
+
 ## init
 
 ```shell
@@ -12,12 +14,6 @@ yarn
 
 ```shell
 yarn build
-```
-
-### build for dev
-
-```shell
-yarn build:dev
 ```
 
 ## publish npm package
