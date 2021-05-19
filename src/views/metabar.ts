@@ -6,15 +6,18 @@ import { TWEET_BASE } from "../constants";
 
 import "./metabar.scss";
 
+/** import types */
+import type Talkee from "../talkee";
+
 export default class Metabar {
-  talkee: any;
+  talkee: Talkee;
   comment: any;
   father: any;
   element: HTMLElement | Element | null;
   subcommentsCom: any;
   type: string;
 
-  constructor(talkee: any, opts: any) {
+  constructor(talkee: Talkee, opts: any) {
     this.talkee = talkee;
     this.comment = opts.comment;
     this.father = opts.father || null;
@@ -28,7 +31,9 @@ export default class Metabar {
   }
 
   render() {
-    const metaContent = $e("div", { className: "talkee-comment-meta" });
+    const metaContent = $e("div", {
+      className: this.talkee.classes("comment-meta"),
+    });
     const {
       reply = true,
       like = true,
@@ -38,11 +43,14 @@ export default class Metabar {
     // reply button
     if (this.father === null && reply) {
       const replyWrapper = $e("div", {
-        className: "talkee-meta-reply-button-wrapper",
+        className: this.talkee.classes("meta-reply-button-wrapper"),
       });
 
       const replyButton = $e("button", {
-        className: `talkee-button talkee-meta-reply-button`,
+        className: this.talkee.classes(
+          "button",
+          this.talkee.classes("meta-reply-button")
+        ),
         innerText: `${
           this.comment.reply_count
             ? `${this.comment.reply_count}` + $t("reply")
@@ -69,7 +77,7 @@ export default class Metabar {
     if (like) {
       // fav
       const favWrapper = $e("div", {
-        className: "talkee-meta-like-button-wrapper",
+        className: this.talkee.classes("meta-like-button-wrapper"),
       });
       const favCount = $e("span", {
         innerText: this.comment["favor_count"] || "",
@@ -77,9 +85,13 @@ export default class Metabar {
       favWrapper.appendChild(favCount);
 
       const favButton = $e("button", {
-        className: `talkee-button talkee-meta-like-button ${
-          this.comment["favor_id"] !== 0 ? "favored" : ""
-        }`,
+        className: this.talkee.classes(
+          "button",
+          [
+            this.talkee.classes("meta-like-button"),
+            this.comment["favor_id"] !== 0 ? "favored" : "",
+          ].join(" ")
+        ),
         innerText: $t("like"),
       });
 
@@ -121,7 +133,10 @@ export default class Metabar {
     if (tweet) {
       // tweet
       const tweetButton = $e("button", {
-        className: "talkee-button talkee-meta-tweet-button",
+        className: this.talkee.classes(
+          "button",
+          this.talkee.classes("meta-tweet-button")
+        ),
         innerText: "",
       });
 

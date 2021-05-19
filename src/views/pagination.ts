@@ -3,8 +3,11 @@ import { $t } from "../i18n";
 
 import "./pagination.scss";
 
+/** import types */
+import type Talkee from "../talkee";
+
 export default class SortBar {
-  talkee: any;
+  talkee: Talkee;
 
   element: HTMLElement | Element | null;
 
@@ -15,7 +18,7 @@ export default class SortBar {
   next: Function;
   locate: Function;
 
-  constructor(talkee: any, opts) {
+  constructor(talkee: Talkee, opts) {
     this.talkee = talkee;
     this.element = null;
 
@@ -27,15 +30,22 @@ export default class SortBar {
     this.locate = opts.locate || (() => 0);
   }
 
-  render() {
+  public render = () => {
     // [prev] [1], [2], [3] ... [n] [next]
-    const paginationCan = $e("div", { className: "talkee-pagination" });
+    const paginationCan = $e("div", {
+      className: this.talkee.classes("pagination"),
+    });
     const pageIndicators = $e("div", {
-      className: "talkee-pagination-indicators",
+      className: this.talkee.classes("pagination-indicators"),
     });
     const prevPageButton = $e("button", {
-      className:
-        "talkee-button talkee-pagination-button talkee-pagination-prev-button",
+      className: this.talkee.classes(
+        "button",
+        [
+          this.talkee.classes("pagination-button"),
+          this.talkee.classes("pagination-prev-button"),
+        ].join(" ")
+      ),
       innerText: $t("prev_page"),
     });
     // prev
@@ -48,8 +58,13 @@ export default class SortBar {
     }
     // next
     const nextPageButton = $e("button", {
-      className:
-        "talkee-button talkee-pagination-button talkee-pagination-next-button",
+      className: this.talkee.classes(
+        "button",
+        [
+          this.talkee.classes("pagination-button"),
+          this.talkee.classes("pagination-next-button"),
+        ].join(" ")
+      ),
       innerText: $t("next_page"),
     });
     nextPageButton.addEventListener("click", () => {
@@ -65,9 +80,13 @@ export default class SortBar {
     const startFrom = Math.max(this.page - range, 0);
     for (let ix = startFrom; ix < startFrom + prefixIndicatorCount; ix++) {
       const btn = $e("button", {
-        className: `talkee-button talkee-pagination-button talkee-pagination-${
-          ix + 1
-        }-button`,
+        className: this.talkee.classes(
+          "button",
+          [
+            this.talkee.classes("pagination-button"),
+            this.talkee.classes(`pagination-${ix + 1}-button`),
+          ].join(" ")
+        ),
         innerText: ix + 1,
       }) as HTMLButtonElement;
       if (this.page === ix + 1) {
@@ -86,5 +105,5 @@ export default class SortBar {
 
     this.element = paginationCan;
     return this.element;
-  }
+  };
 }
