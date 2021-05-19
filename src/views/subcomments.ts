@@ -47,7 +47,8 @@ export default class SubComments {
       this.comment.id,
       this.order,
       append ? this.page + 1 : 1,
-      this.ipp
+      this.ipp,
+      this.talkee.apiBase
     );
     this.ipp = ret.ipp;
     this.page = ret.page;
@@ -99,7 +100,8 @@ export default class SubComments {
       try {
         resp = await apis.postSubComment(
           this.comment.id,
-          (subCommentsEditor as any).value.trim()
+          (subCommentsEditor as any).value.trim(),
+          this.talkee.apiBase
         );
         resp.creator = helper.getProfile();
       } catch (e) {
