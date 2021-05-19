@@ -55,6 +55,7 @@ const request = async function (opts): Promise<any> {
 
 const getMe = async function (baseURL: string) {
   return await request({
+    baseURL,
     method: "get",
     url: "/me",
   });
@@ -62,6 +63,7 @@ const getMe = async function (baseURL: string) {
 
 const auth = async function (code, baseURL: string) {
   return await request({
+    baseURL,
     method: "post",
     url: "/auth",
     data: { code },
@@ -70,6 +72,7 @@ const auth = async function (code, baseURL: string) {
 
 const getComment = (id, baseURL: string): Promise<IComment> => {
   return request({
+    baseURL,
     method: "get",
     url: "/comment/" + id,
   });
@@ -81,6 +84,7 @@ const getComments = (
   baseURL: string
 ): Promise<Array<IComment>> => {
   return request({
+    baseURL,
     method: "get",
     url: "/comments",
     params: { order_key: order, page: page },
@@ -89,6 +93,7 @@ const getComments = (
 
 const postComment = (slug, content, baseURL: string): Promise<IComment> => {
   return request({
+    baseURL,
     method: "POST",
     url: "/comments",
     data: { slug, content },
@@ -97,6 +102,7 @@ const postComment = (slug, content, baseURL: string): Promise<IComment> => {
 
 const putFavor = ({ objType, objId, baseURL }) => {
   return request({
+    baseURL,
     method: "POST",
     url: "/favor/",
     data: { type: objType, id: objId },
@@ -105,6 +111,7 @@ const putFavor = ({ objType, objId, baseURL }) => {
 
 const putUnfavor = (favId, baseURL: string) => {
   request({
+    baseURL,
     method: "DELETE",
     url: "/favor/" + favId,
   });
@@ -116,6 +123,7 @@ const postSubComment = (
   baseURL: string
 ): Promise<IComment> => {
   return request({
+    baseURL,
     method: "POST",
     url: "/replies",
     data: { comment_id: commentId, content },
@@ -130,6 +138,7 @@ const getSubComments = (
   baseURL: string
 ): Promise<Array<IComment>> => {
   return request({
+    baseURL,
     method: "GET",
     url: "/replies",
     params: { comment_id, order_key: order, page, ipp },
