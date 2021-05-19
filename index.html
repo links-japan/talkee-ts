@@ -57,11 +57,13 @@
         tweetTags: ['#LINKS', '#リンケス'],       // tweet tags
         // identitySelector: '#links-login',     // selector for identity.
         // apiBase: apiBase,                     // alternative apiBase.
-        // loginUrl: loginUrl,                   // alternative login url.
+        loginUrl: "",                   // alternative login url.
         // render UI
         render: {
           metabar: true,
-          subcomment: false
+          subcomment: true,
+          tweet: false,
+          reply: true
         }
       })
     }

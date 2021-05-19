@@ -1,5 +1,6 @@
 import helper from "./utils/helper";
 import Base64 from "./utils/base64";
+import classnames from "./utils/classnames";
 import icons from "./icons/index";
 import apis from "./apis";
 import { $t } from "./i18n";
@@ -26,22 +27,23 @@ export class Talkee {
   private repliedCommentId: string | null;
   private repliedUserId: string | null;
   private apiBase: string;
-  private slug: string;
-  private isSigned: boolean;
   private sortMethod: string;
   private page: number;
   private total: number;
   private itemPerPage: number;
   private totalPage: number;
-  private components: Record<string, any>;
-  private container: null | HTMLElement;
   private profile: null | Record<string, any>;
-  private loginUrl: string;
-  private siteId: string;
-  private tweetTags: any[];
   private expandable: boolean;
   private defaultAvatarUrl: string;
+  private prefixCls: string;
 
+  public container: null | HTMLElement;
+  public components: Record<string, any>;
+  public slug: string;
+  public isSigned: boolean;
+  public loginUrl: string;
+  public siteId: string;
+  public tweetTags: any[];
   public opts: Record<string, any>;
 
   public constructor(opts: Record<string, any>) {
@@ -54,7 +56,7 @@ export class Talkee {
     this.isSigned = false;
     this.sortMethod = "favor_count";
     this.page = 1;
-    this.total = 10;
+    this.total = 0;
     this.itemPerPage = 10;
     this.totalPage = 1;
     this.components = {};
@@ -65,10 +67,15 @@ export class Talkee {
     this.tweetTags = [];
     this.expandable = false;
     this.defaultAvatarUrl = "";
+    this.prefixCls = "talkee";
 
     setTimeout(() => {
       this.init();
     }, 200);
+  }
+
+  public get classes() {
+    return classnames(this.prefixCls);
   }
 
   public auth = async (code) => {
@@ -113,10 +120,10 @@ export class Talkee {
 
   public checkTextareaStatus = (area) => {
     const btn = this.container?.querySelector(
-      ".talkee-editor-submit"
+      `.${this.classes("editor-submit")}`
     ) as HTMLButtonElement;
     const hint = this.container?.querySelector(
-      ".talkee-editor-hint"
+      `.${this.classes("editor-hint")}`
     ) as HTMLElement;
     if (!btn || !hint) return;
     if (area.value.trim().length === 0 || area.value.trim().length > 512) {
@@ -134,26 +141,26 @@ export class Talkee {
 
   public applySortMethod = async (method, keepSpotlight = false) => {
     this.container
-      ?.querySelectorAll(".talkee-sort-button")
+      ?.querySelectorAll(`.${this.classes("sort-button")}`)
       .forEach(function (x: any) {
         x.disabled = false;
       });
     if (method === "id") {
       (
         this.container?.querySelector(
-          ".talkee-sort-by-id-desc-button"
+          `.${this.classes("sort-by-id-desc-button")}`
         ) as HTMLButtonElement
       ).disabled = true;
     } else if (method === "id-asc") {
       (
         this.container?.querySelector(
-          ".talkee-sort-by-id-asc-button"
+          `.${this.classes("sort-by-id-asc-button")}`
         ) as HTMLButtonElement
       ).disabled = true;
     } else {
       (
         this.container?.querySelector(
-          ".talkee-sort-by-fav-button"
+          `.${this.classes("sort-by-fav-button")}`
         ) as HTMLButtonElement
       ).disabled = true;
     }
@@ -169,7 +176,7 @@ export class Talkee {
     const self = this;
     const commentCan = $e("div", {
       id: "talkee-comment-" + comment.id,
-      className: `talkee-comment ${fatherComment ? "sub" : ""}`,
+      className: self.classes("comment", fatherComment ? "sub" : ""),
     });
 
     // left
@@ -177,27 +184,31 @@ export class Talkee {
 
     // avatar
     const commentAvatar = $e("img", {
-      className: "talkee-comment-avatar",
+      className: self.classes("comment-avatar"),
       src: comment.creator["avatar_url"] || self.defaultAvatarUrl,
     });
     commentLeft.appendChild(commentAvatar);
     commentCan.appendChild(commentLeft);
 
     // right
-    const commentRight = $e("div", { className: "talkee-comment-right" });
+    const commentRight = $e("div", {
+      className: self.classes("comment-right"),
+    });
 
     // right top
-    const commentRT = $e("div", { className: "talkee-comment-right-top" });
+    const commentRT = $e("div", {
+      className: self.classes("comment-right-top"),
+    });
 
     // right top > name
     const commentName = $e("a", {
-      className: "talkee-comment-name surprise",
+      className: self.classes("comment-name", "surprise"),
       innerText: comment.creator["full_name"],
     });
 
     // right top > time
     const commentTime = $e("span", {
-      className: "talkee-comment-time",
+      className: self.classes("comment-time"),
       innerText: helper.formatTime(comment["created_at"]),
     });
     commentRT.appendChild(commentName);
@@ -205,15 +216,15 @@ export class Talkee {
 
     if (comment.reward && comment.reward.amount) {
       const commentReward = $e("span", {
-        className: `talkee-comment-reward`,
+        className: self.classes("comment-reward"),
       });
       const commentRewardIcon = $e("span", {
-        className: "talkee-comment-reward-icon",
+        className: self.classes("comment-reward-icon"),
       });
       commentRewardIcon.style.backgroundImage =
         'url("' + icons.badgeIcon + '")';
       const commentRewardText = $e("span", {
-        className: "talkee-comment-reward-text",
+        className: self.classes("comment-reward-text"),
         innerText: `${comment.reward.amount} Satoshi`,
       });
 
@@ -225,7 +236,9 @@ export class Talkee {
     commentRight.appendChild(commentRT);
 
     // content
-    const commentContent = $e("div", { className: "talkee-comment-content" });
+    const commentContent = $e("div", {
+      className: self.classes("comment-content"),
+    });
     let commentText: string = "";
     let moreButton: any = null;
     if (comment.content.length < 160) {
@@ -233,7 +246,7 @@ export class Talkee {
     } else {
       commentText = helper.parseText(comment.content.slice(0, 160));
       moreButton = $e("a", {
-        className: "talkee-comment-content-more",
+        className: self.classes("comment-content-more"),
         innerText: $t("content_more"),
       });
       moreButton.addEventListener("click", () => {
@@ -277,23 +290,23 @@ export class Talkee {
 
   public buildEditorUI = (container) => {
     const self = this;
-    const editorCan = $e("div", { className: "talkee-editor" });
+    const editorCan = $e("div", { className: self.classes("editor") });
     // left
-    const editorLeft = $e("div", { className: "talkee-editor-left" });
+    const editorLeft = $e("div", { className: self.classes("editor-left") });
     // avatar
     const editorAvatar = $e("img", {
       className: "talkee-editor-avatar",
-      src: this.profile
-        ? this.profile.avatar_url || self.defaultAvatarUrl
+      src: self.profile
+        ? self.profile.avatar_url || self.defaultAvatarUrl
         : self.defaultAvatarUrl,
     });
     editorLeft.appendChild(editorAvatar);
     editorCan.appendChild(editorLeft);
 
     // .talkee-editor > editor area
-    const editorRight = $e("div", { className: "talkee-editor-right" });
+    const editorRight = $e("div", { className: self.classes("editor-right") });
     const editorArea = $e("textarea", {
-      className: "talkee-editor-area textarea",
+      className: self.classes("editor-area", "textarea"),
       placeholder: $t("comment_placeholder"),
     });
     editorArea.addEventListener("input", function (e) {
@@ -313,9 +326,9 @@ export class Talkee {
     editorRight.appendChild(editorArea);
     this.editorArea = editorArea;
 
-    const editorCtrl = $e("div", { className: "talkee-editor-ctrl" });
+    const editorCtrl = $e("div", { className: self.classes("editor-ctrl") });
     const editorSubmit = $e("button", {
-      className: "talkee-editor-submit",
+      className: self.classes("editor-submit"),
       innerText: $t("submit"),
       disabled: true,
     });
@@ -323,7 +336,7 @@ export class Talkee {
       self.sendComment();
     });
     const hint = $e("div", {
-      className: "talkee-editor-hint",
+      className: self.classes("editor-hint"),
       innerText: $t("too_many_charactors"),
     });
     editorCtrl.appendChild(hint);
@@ -334,11 +347,7 @@ export class Talkee {
 
     // disabled editor
     if (!self.isSigned) {
-      const editorMask = new views.EditorMask(self, {
-        siteId: self.siteId,
-        slug: self.slug,
-        loginUrl: self.loginUrl,
-      });
+      const editorMask = new views.EditorMask(self);
       editorCan.appendChild(editorMask.render());
     }
     container.appendChild(editorCan);
@@ -347,8 +356,8 @@ export class Talkee {
   public buildLoadingUI = () => {
     if (this.container) {
       this.container.innerHTML =
-        '<div class="talkee">' +
-        '<div class="talkee-loading>' +
+        `<div class="${this.classes()}">` +
+        `<div class="${this.classes("loading")}>` +
         $t("loading") +
         "</div>" +
         "</div>";
@@ -357,10 +366,10 @@ export class Talkee {
 
   public buildTalkeeUI = () => {
     if (!this.container) return;
-
-    this.container.innerHTML = `<div class="talkee ${
+    this.container.innerHTML = `<div class="${this.classes(
+      void 0,
       this.expandable ? "expandable" : ""
-    }"></div>`;
+    )}"></div>`;
 
     // build talkee sort bar
     this.components.sortbar = new views.SortBar(this, { total: this.total });
@@ -387,6 +396,16 @@ export class Talkee {
     this.container?.children[0].append(expansion.render());
   };
 
+  public buildLoginURL = () => {
+    const state = Base64.encode(
+      JSON.stringify({
+        s: this.siteId,
+        p: this.slug,
+      })
+    );
+    return `${this.loginUrl}${state}`;
+  };
+
   private init = async () => {
     const opts = this.opts;
     console.log("talkee options:", opts);
@@ -398,6 +417,7 @@ export class Talkee {
     this.tweetTags = opts.tweetTags || [];
     this.expandable = opts.expandable || false;
     this.defaultAvatarUrl = opts.defaultAvatarUrl || DEFAULT_AVATAR;
+    this.prefixCls = opts.prefixCls || this.prefixCls;
 
     // apis params
     apis.setDefaultParams({ site_id: this.siteId, slug: this.slug });

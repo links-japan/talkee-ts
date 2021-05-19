@@ -5,36 +5,43 @@ import { $t } from "../i18n";
 
 import "./sortbar.scss";
 
+/** import types */
+import type Talkee from "../talkee";
+
 export default class SortBar {
-  talkee: any;
+  talkee: Talkee;
 
   element: HTMLElement | Element | null;
 
   total: number;
 
-  constructor(talkee: any, opts) {
+  constructor(talkee: Talkee, opts) {
     this.talkee = talkee;
     this.element = null;
 
     this.total = opts.total || 0;
   }
 
-  setProps(props) {
+  public setProps = (props) => {
     this.total = props?.total || 0;
-    const count = this.element?.querySelector(".talkee-sort-bar-comment-count");
+    const count = this.element?.querySelector(
+      `.${this.talkee.classes("sort-bar-comment-count")}`
+    );
     (count as any).innerText = this.total;
-  }
+  };
 
-  render() {
-    const sortBar = $e("div", { className: "talkee-sort-bar" });
-    const sortBarLeft = $e("div", { className: "talkee-sort-bar-left" });
+  public render = () => {
+    const sortBar = $e("div", { className: this.talkee.classes("sort-bar") });
+    const sortBarLeft = $e("div", {
+      className: this.talkee.classes("sort-bar-left"),
+    });
     const sortBarCommentIcon = $e("span", {
-      className: "talkee-sort-bar-comment-icon",
+      className: this.talkee.classes("sort-bar-comment-icon"),
     });
     sortBarCommentIcon.style.backgroundImage =
       'url("' + icons.commentIcon + '")';
     const sortBarCommentCount = $e("span", {
-      className: "talkee-sort-bar-comment-count",
+      className: this.talkee.classes("sort-bar-comment-count"),
       innerText: this.total,
     });
 
@@ -42,18 +49,28 @@ export default class SortBar {
     sortBarLeft.appendChild(sortBarCommentCount);
     sortBar.appendChild(sortBarLeft);
 
-    const sortBarRight = $e("div", { className: "talkee-sort-bar-right" });
-    const sortIcon = $e("span", { className: "talkee-sort-icon" });
+    const sortBarRight = $e("div", {
+      className: this.talkee.classes("sort-bar-right"),
+    });
+    const sortIcon = $e("span", {
+      className: this.talkee.classes("sort-icon"),
+    });
     sortIcon.style.backgroundImage = 'url("' + icons.sortIcon + '")';
     const sortPrefix = $e("span", {
-      className: "talkee-sort-prefix",
+      className: this.talkee.classes("sort-prefix"),
       innerText: "",
     });
     sortBarRight.appendChild(sortIcon);
     sortBarRight.appendChild(sortPrefix);
 
     const sortByFavButton = $e("button", {
-      className: "talkee-button talkee-sort-button talkee-sort-by-fav-button",
+      className: this.talkee.classes(
+        "button",
+        [
+          this.talkee.classes("sort-button"),
+          this.talkee.classes("sort-by-fav-button"),
+        ].join(" ")
+      ),
       innerText: $t("sort_by_fav_button"),
       disabled: true,
     });
@@ -61,16 +78,26 @@ export default class SortBar {
       this.talkee.applySortMethod("favor_count");
     });
     const sortByIdButton = $e("button", {
-      className:
-        "talkee-button talkee-sort-button talkee-sort-by-id-desc-button",
+      className: this.talkee.classes(
+        "button",
+        [
+          this.talkee.classes("sort-button"),
+          this.talkee.classes("sort-by-id-desc-button"),
+        ].join(" ")
+      ),
       innerText: $t("sort_by_id_desc_button"),
     });
     sortByIdButton.addEventListener("click", () => {
       this.talkee.applySortMethod("id");
     });
     const sortByIdAscButton = $e("button", {
-      className:
-        "talkee-button talkee-sort-button talkee-sort-by-id-asc-button",
+      className: this.talkee.classes(
+        "button",
+        [
+          this.talkee.classes("sort-button"),
+          this.talkee.classes("sort-by-id-asc-button"),
+        ].join(" ")
+      ),
       innerText: $t("sort_by_id_asc_button"),
     });
     sortByIdAscButton.addEventListener("click", () => {
@@ -81,7 +108,10 @@ export default class SortBar {
       className: "talkee-menu",
     });
     const menuItemLogout = $e("li", {
-      className: "talkee-menu-item talkee-menu-item-logout",
+      className: this.talkee.classes(
+        "menu-item",
+        this.talkee.classes("menu-item-logout")
+      ),
       innerText: $t("logout"),
     });
     menuItemLogout.addEventListener("click", () => {
@@ -91,7 +121,10 @@ export default class SortBar {
     menu.append(menuItemLogout);
 
     const menuButton = $e("button", {
-      className: "talkee-button talkee-menu-button",
+      className: this.talkee.classes(
+        "button",
+        this.talkee.classes("menu-button")
+      ),
       innerText: " ",
     });
     menuButton.addEventListener("click", () => {
@@ -114,5 +147,5 @@ export default class SortBar {
 
     this.element = sortBar;
     return this.element;
-  }
+  };
 }

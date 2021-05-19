@@ -7,8 +7,11 @@ import EditorMask from "../views/editormask";
 import "./subcomments.scss";
 import { IComment } from "../types/api";
 
+/** import types */
+import type Talkee from "../talkee";
+
 export default class SubComments {
-  talkee: any;
+  talkee: Talkee;
   comment: any;
   subComments: any;
 
@@ -21,7 +24,7 @@ export default class SubComments {
   ipp: number;
   total: number;
 
-  constructor(talkee: any, comment: any) {
+  constructor(talkee: Talkee, comment: any) {
     this.talkee = talkee;
     this.comment = comment;
     this.subComments = [];
@@ -36,7 +39,7 @@ export default class SubComments {
     this.total = 0;
   }
 
-  async fetch(append = false) {
+  public fetch = async (append = false) => {
     if (this.subComments.length !== 0 && !append) {
       return;
     }
@@ -65,26 +68,29 @@ export default class SubComments {
       (this.loadMoreBtn as any).hide();
     }
     return 0;
-  }
+  };
 
-  render() {
+  public render = () => {
     const subCommentsContainer = $e("div", {
-      className: "talkee-sub-comments",
+      className: this.talkee.classes("sub-comments"),
     });
     subCommentsContainer.style.display = "none";
 
     const editorWrapper = $e("div", {
-      className: "talkee-sub-comments-editor-wrapper",
+      className: this.talkee.classes("sub-comments-editor-wrapper"),
     });
 
     const subCommentsEditor = $e("textarea", {
-      className: "talkee-sub-comments-editor",
+      className: this.talkee.classes("sub-comments-editor"),
       placeholder: $t("sub_comment_placeholder"),
     });
     editorWrapper.appendChild(subCommentsEditor);
 
     const subCommentsSubmit = $e("button", {
-      className: "talkee-button talkee-sub-comments-submit",
+      className: this.talkee.classes(
+        "button",
+        this.talkee.classes("sub-comments-submit")
+      ),
       innerText: $t("submit"),
     });
 
@@ -107,18 +113,14 @@ export default class SubComments {
     editorWrapper.appendChild(subCommentsSubmit);
 
     if (!this.talkee.isSigned) {
-      const editorMask = new EditorMask(this, {
-        siteId: this.talkee.siteId,
-        slug: this.talkee.slug,
-        loginUrl: this.talkee.loginUrl,
-      });
+      const editorMask = new EditorMask(this.talkee);
       editorWrapper.appendChild(editorMask.render());
     }
 
     subCommentsContainer.appendChild(editorWrapper);
 
     const subCommentsUl = $e("ul", {
-      className: "talkee-sub-comments-ul",
+      className: this.talkee.classes("sub-comments-ul"),
     });
 
     subCommentsUl.style.display = "none";
@@ -126,7 +128,10 @@ export default class SubComments {
     subCommentsContainer.appendChild(subCommentsUl);
 
     this.loadMoreBtn = $e("button", {
-      className: "talkee-button talkee-sub-load-more-button",
+      className: this.talkee.classes(
+        "button",
+        this.talkee.classes("sub-load-more-button")
+      ),
       innerText: $t("load_more"),
     });
     this.loadMoreBtn.addEventListener("click", () => {
@@ -137,5 +142,5 @@ export default class SubComments {
     this.element = subCommentsContainer;
     this.ul = subCommentsUl;
     return subCommentsContainer;
-  }
+  };
 }

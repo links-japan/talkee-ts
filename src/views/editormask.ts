@@ -1,47 +1,33 @@
 import { $e } from "../utils/dom";
 import { $t } from "../i18n";
 import icons from "../icons/index";
-import Base64 from "../utils/base64";
+
+/** import types */
+import type Talkee from "../talkee";
 
 export default class EditorMask {
-  talkee: any;
+  talkee: Talkee;
   element: HTMLElement | Element | null;
-  siteId: 0;
-  slug: "";
-  loginUrl: "";
 
-  constructor(talkee: any, opts: any) {
+  constructor(talkee: Talkee) {
     this.talkee = talkee;
     this.element = null;
-    this.siteId = opts.siteId;
-    this.slug = opts.slug;
-    this.loginUrl = opts.loginUrl;
   }
 
-  buildLoginURL() {
-    const state = Base64.encode(
-      JSON.stringify({
-        s: this.siteId,
-        p: this.slug,
-      })
-    );
-    return `${this.loginUrl}${state}`;
-  }
-
-  render() {
+  public render = () => {
     const editorMask = $e("div", {
-      className: "talkee-editor-mask",
+      className: this.talkee.classes("editor-mask"),
     });
     const loginButton = $e("a", {
-      className: "talkee-tap-to-login",
+      className: this.talkee.classes("tap-to-login"),
       innerText: $t("tap_to_login"),
     });
     loginButton.style.backgroundImage = `url("${icons.commentBtnIcon}")`;
     loginButton.setAttribute("rel", "nofollow");
-    loginButton.setAttribute("href", this.buildLoginURL());
+    loginButton.setAttribute("href", this.talkee.buildLoginURL());
     editorMask.append(loginButton);
 
     this.element = editorMask;
     return this.element;
-  }
+  };
 }

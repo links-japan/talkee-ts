@@ -7,8 +7,11 @@ import Pagination from "./pagination";
 // import "./comments.scss";
 import { IComment } from "../types/api";
 
+/** import types */
+import type Talkee from "../talkee";
+
 export default class Comments {
-  talkee: any;
+  talkee: Talkee;
   comments: any;
 
   element: HTMLElement | Element | null;
@@ -20,7 +23,7 @@ export default class Comments {
   ipp: number;
   total: number;
 
-  constructor(talkee: any, opts: any) {
+  constructor(talkee: Talkee, opts: any) {
     this.talkee = talkee;
     this.comments = [];
 
@@ -62,7 +65,7 @@ export default class Comments {
         this.ul?.append(this.talkee.buildCommentUI(sc, null));
       }
 
-      const pagination = new Pagination(this, {
+      const pagination = new Pagination(this.talkee, {
         page: this.page,
         totalPage: Math.ceil(this.total / this.ipp),
         prev: proc,
@@ -73,9 +76,9 @@ export default class Comments {
       (this.ul as any).append(pagination.render());
     } else {
       this.talkee.components.expansion.expand();
-      (this.ul as any).innerHTML = `<div class="talkee-no-comment-hint">${$t(
-        "no_comment_hint"
-      )}</div>`;
+      (this.ul as any).innerHTML = `<div class=${this.talkee.classes(
+        "no-comment-hint"
+      )}>${$t("no_comment_hint")}</div>`;
     }
     return ret;
   }
@@ -97,20 +100,22 @@ export default class Comments {
 
   expand() {
     // @TODO refactor
-    (this.spotlight?.querySelector(
-      ".talkee-meta-reply-button"
-    ) as any)?.click();
+    (
+      this.spotlight?.querySelector(
+        `.${this.talkee.classes("meta-reply-button")}`
+      ) as any
+    )?.click();
   }
 
   render() {
     const commentsContainer = $e("div", {
-      className: "talkee-comments",
+      className: this.talkee.classes("comments"),
     });
     const commentsUl = $e("div", {
-      className: "talkee-comments-ul",
+      className: this.talkee.classes("comments-ul"),
     });
     const spotlight = $e("div", {
-      className: "talkee-comments-spotlight",
+      className: this.talkee.classes("comments-spotlight"),
     });
 
     this.ul = commentsUl;
