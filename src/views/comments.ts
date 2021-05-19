@@ -40,7 +40,7 @@ export default class Comments {
   async reload(opts: any = {}) {
     const order = opts?.order || this.order;
     const page = opts?.page || this.page;
-    const ret: any = await apis.getComments(order, page);
+    const ret: any = await apis.getComments(order, page, this.talkee.apiBase);
 
     this.ipp = ret.ipp;
     this.page = ret.page;
@@ -85,7 +85,7 @@ export default class Comments {
 
   async locate(commentId) {
     // fetch the comment, and append it to the top
-    const comment: any = await apis.getComment(commentId);
+    const comment: any = await apis.getComment(commentId, this.talkee.apiBase);
     this.spotlight?.append(this.talkee.buildCommentUI(comment, null));
     this.talkee.container?.scrollIntoView();
   }

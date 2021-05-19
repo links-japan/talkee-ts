@@ -106,7 +106,7 @@ export default class Metabar {
           return;
         }
         if (this.comment["favor_id"] !== 0) {
-          await apis.putUnfavor(this.comment["favor_id"]);
+          await apis.putUnfavor(this.comment["favor_id"], this.talkee.apiBase);
           favButton.classList.remove("favored");
           this.comment["favor_id"] = 0;
           this.comment["favor_count"] -= 1;
@@ -114,6 +114,7 @@ export default class Metabar {
           const resp = await apis.putFavor({
             objType: this.type,
             objId: this.comment["id"],
+            baseURL: this.talkee.apiBase,
           });
           favButton.classList.add("favored");
           this.comment["favor_id"] = resp.id;

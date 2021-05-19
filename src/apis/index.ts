@@ -53,14 +53,14 @@ const request = async function (opts): Promise<any> {
   });
 };
 
-const getMe = async function () {
+const getMe = async function (baseURL: string) {
   return await request({
     method: "get",
     url: "/me",
   });
 };
 
-const auth = async function (code) {
+const auth = async function (code, baseURL: string) {
   return await request({
     method: "post",
     url: "/auth",
@@ -68,14 +68,18 @@ const auth = async function (code) {
   });
 };
 
-const getComment = (id): Promise<IComment> => {
+const getComment = (id, baseURL: string): Promise<IComment> => {
   return request({
     method: "get",
     url: "/comment/" + id,
   });
 };
 
-const getComments = (order, page): Promise<Array<IComment>> => {
+const getComments = (
+  order,
+  page,
+  baseURL: string
+): Promise<Array<IComment>> => {
   return request({
     method: "get",
     url: "/comments",
@@ -83,7 +87,7 @@ const getComments = (order, page): Promise<Array<IComment>> => {
   });
 };
 
-const postComment = (slug, content): Promise<IComment> => {
+const postComment = (slug, content, baseURL: string): Promise<IComment> => {
   return request({
     method: "POST",
     url: "/comments",
@@ -91,7 +95,7 @@ const postComment = (slug, content): Promise<IComment> => {
   });
 };
 
-const putFavor = ({ objType, objId }) => {
+const putFavor = ({ objType, objId, baseURL }) => {
   return request({
     method: "POST",
     url: "/favor/",
@@ -99,14 +103,18 @@ const putFavor = ({ objType, objId }) => {
   });
 };
 
-const putUnfavor = (favId) => {
+const putUnfavor = (favId, baseURL: string) => {
   request({
     method: "DELETE",
     url: "/favor/" + favId,
   });
 };
 
-const postSubComment = (commentId, content): Promise<IComment> => {
+const postSubComment = (
+  commentId,
+  content,
+  baseURL: string
+): Promise<IComment> => {
   return request({
     method: "POST",
     url: "/replies",
@@ -118,7 +126,8 @@ const getSubComments = (
   comment_id,
   order,
   page,
-  ipp
+  ipp,
+  baseURL: string
 ): Promise<Array<IComment>> => {
   return request({
     method: "GET",

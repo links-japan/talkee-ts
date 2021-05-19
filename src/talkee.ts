@@ -26,7 +26,6 @@ export class Talkee {
   private editorArea: HTMLElement | null;
   private repliedCommentId: string | null;
   private repliedUserId: string | null;
-  private apiBase: string;
   private sortMethod: string;
   private page: number;
   private total: number;
@@ -37,11 +36,12 @@ export class Talkee {
   private defaultAvatarUrl: string;
   private prefixCls: string;
 
+  public apiBase: string;
+  public loginUrl: string;
   public container: null | HTMLElement;
   public components: Record<string, any>;
   public slug: string;
   public isSigned: boolean;
-  public loginUrl: string;
   public siteId: string;
   public tweetTags: any[];
   public opts: Record<string, any>;
@@ -80,9 +80,9 @@ export class Talkee {
 
   public auth = async (code) => {
     try {
-      await apis.auth(code);
+      await apis.auth(code, this.apiBase);
       // redirect if possible
-      const me: any = await apis.getMe();
+      const me: any = await apis.getMe(this.apiBase);
       helper.setProfile(me);
     } catch (e) {
       console.error("failed to auth", e);
@@ -102,7 +102,7 @@ export class Talkee {
     if (text.length !== 0) {
       let myComment: any = null;
       try {
-        myComment = await apis.postComment(this.slug, text);
+        myComment = await apis.postComment(this.slug, text, this.apiBase);
       } catch (e) {
         if (e.response && e.response.status === 429) {
           return helper.errmsg(e);
@@ -411,7 +411,10 @@ export class Talkee {
     console.log("talkee options:", opts);
 
     this.apiBase = opts.apiBase || API_BASE;
-    this.loginUrl = opts.loginUrl || LOGIN_URL;
+    this.loginUrl =
+      opts.loginBase && opts.clientId
+        ? `${opts.loginBase}?client_id=${opts.clientId}&scope=PROFILE:READ+PHONE:READ&state=`
+        : LOGIN_URL;
     this.slug = opts.slug;
     this.siteId = opts.siteId;
     this.tweetTags = opts.tweetTags || [];
