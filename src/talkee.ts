@@ -403,7 +403,16 @@ export class Talkee {
         p: this.slug,
       })
     );
-    return `${this.loginUrl}${state}`;
+    const stateInd = this.loginUrl.indexOf("state=");
+    if (!!~stateInd) {
+      this.loginUrl =
+        this.loginUrl.slice(0, stateInd + 6) +
+        state +
+        this.loginUrl.slice(stateInd + 6);
+    } else {
+      this.loginUrl = this.loginUrl + `&state=${state}`;
+    }
+    return this.loginUrl;
   };
 
   private init = async () => {
@@ -412,9 +421,10 @@ export class Talkee {
 
     this.apiBase = opts.apiBase || API_BASE;
     this.loginUrl =
-      opts.loginBase && opts.clientId
+      opts.loginUrl ||
+      (opts.loginBase && opts.clientId
         ? `${opts.loginBase}?client_id=${opts.clientId}&scope=PROFILE:READ+PHONE:READ&state=`
-        : LOGIN_URL;
+        : LOGIN_URL);
     this.slug = opts.slug;
     this.siteId = opts.siteId;
     this.tweetTags = opts.tweetTags || [];
