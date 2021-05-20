@@ -23,14 +23,14 @@ const $e = function (tag: string, opts: Record<string, any>) {
 export class Talkee {
   static getUrlQuery = helper.getUrlQuery;
 
-  private editorArea: HTMLElement | null;
   private repliedCommentId: string | null;
   private repliedUserId: string | null;
-  private sortMethod: string;
   private page: number;
-  private total: number;
   private itemPerPage: number;
   private totalPage: number;
+  private editorArea: HTMLElement | null;
+  private sortMethod: string;
+  private total: number;
   private profile: null | Record<string, any>;
   private expandable: boolean;
   private defaultAvatarUrl: string;
@@ -417,7 +417,7 @@ export class Talkee {
 
   private init = async () => {
     const opts = this.opts;
-    console.log("talkee options:", opts);
+    console.log("init talkee options:", opts);
 
     this.apiBase = opts.apiBase || API_BASE;
     this.loginUrl =
@@ -491,6 +491,20 @@ export class Talkee {
       this.applySortMethod(this.sortMethod, true);
     }, 200);
   };
+
+  public setOptions(opts: Record<string, any>) {
+    this.opts = { ...this.opts, ...opts };
+    console.log("set talkee options:", opts);
+
+    this.apiBase = opts.apiBase || this.apiBase;
+    this.loginUrl = opts.loginUrl || this.loginUrl;
+    this.slug = opts.slug || this.slug;
+    this.siteId = opts.siteId || this.siteId;
+    this.tweetTags = opts.tweetTags || this.tweetTags;
+    this.expandable = opts.expandable || this.expandable;
+    this.defaultAvatarUrl = opts.defaultAvatarUrl || this.defaultAvatarUrl;
+    this.prefixCls = opts.prefixCls || this.prefixCls;
+  }
 }
 
 Talkee.getUrlQuery = helper.getUrlQuery;

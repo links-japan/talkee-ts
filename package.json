@@ -1,6 +1,6 @@
 {
   "name": "@links-japan/talkee",
-  "version": "0.2.0-4",
+  "version": "0.2.0-5",
   "description": "The talkee plugin sdk",
   "main": "lib/index.js",
   "module": "es/index.js",
