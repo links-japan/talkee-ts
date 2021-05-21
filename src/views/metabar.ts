@@ -81,6 +81,7 @@ export default class Metabar {
       });
       const favCount = $e("span", {
         innerText: this.comment["favor_count"] || "",
+        className: this.talkee.classes("meta-like-count"),
       });
       favWrapper.appendChild(favCount);
 
