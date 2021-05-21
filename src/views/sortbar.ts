@@ -105,7 +105,7 @@ export default class SortBar {
     });
 
     const menu = $e("ul", {
-      className: "talkee-menu",
+      className: this.talkee.classes("menu"),
     });
     const menuItemLogout = $e("li", {
       className: this.talkee.classes(
