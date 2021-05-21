@@ -175,12 +175,12 @@ export class Talkee {
   public buildCommentUI = (comment, fatherComment = null) => {
     const self = this;
     const commentCan = $e("div", {
-      id: "talkee-comment-" + comment.id,
+      id: self.classes("comment") + "-" + comment.id,
       className: self.classes("comment", fatherComment ? "sub" : ""),
     });
 
     // left
-    const commentLeft = $e("div", { className: "talkee-comment-left" });
+    const commentLeft = $e("div", { className: self.classes("comment-left") });
 
     // avatar
     const commentAvatar = $e("img", {
@@ -295,7 +295,7 @@ export class Talkee {
     const editorLeft = $e("div", { className: self.classes("editor-left") });
     // avatar
     const editorAvatar = $e("img", {
-      className: "talkee-editor-avatar",
+      className: self.classes("editor-avatar"),
       src: self.profile
         ? self.profile.avatar_url || self.defaultAvatarUrl
         : self.defaultAvatarUrl,
