@@ -45,8 +45,10 @@ export class Talkee {
   public siteId: string;
   public tweetTags: any[];
   public opts: Record<string, any>;
+  public isLogin: boolean;
 
   public constructor(opts: Record<string, any>) {
+    this.isLogin = false;
     this.opts = opts;
     this.editorArea = null;
     this.repliedCommentId = null;
@@ -84,6 +86,7 @@ export class Talkee {
       // redirect if possible
       const me: any = await apis.getMe(this.apiBase);
       helper.setProfile(me);
+      this.isLogin = true;
     } catch (e) {
       console.error("failed to auth", e);
     }
