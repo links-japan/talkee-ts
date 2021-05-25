@@ -94,7 +94,9 @@ export class Talkee {
     } catch (e) {
       console.error("failed to auth", e);
     }
-    if (helper.getRedirect()) {
+
+    const { loginRedirect = true } = this.opts;
+    if (loginRedirect && helper.getRedirect()) {
       window.location.replace(helper.getRedirect() ?? "");
       return;
     }
@@ -121,6 +123,10 @@ export class Talkee {
         area.style.height = "5px";
         myComment.creator = this.profile;
         this.components.comments.prepend([myComment] as any);
+        const hint = document.querySelector(
+          `.${this.classes("no-comment-hint")}`
+        ) as HTMLElement;
+        hint.style.display = "none";
       }
     }
   };

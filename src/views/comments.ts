@@ -65,15 +65,17 @@ export default class Comments {
         this.ul?.append(this.talkee.buildCommentUI(sc, null));
       }
 
-      const pagination = new Pagination(this.talkee, {
-        page: this.page,
-        totalPage: Math.ceil(this.total / this.ipp),
-        prev: proc,
-        next: proc,
-        locate: proc,
-      });
-
-      (this.ul as any).append(pagination.render());
+      const { hidePaginationWhenSinglePage } = this.talkee.opts;
+      if (!hidePaginationWhenSinglePage) {
+        const pagination = new Pagination(this.talkee, {
+          page: this.page,
+          totalPage: Math.ceil(this.total / this.ipp),
+          prev: proc,
+          next: proc,
+          locate: proc,
+        });
+        (this.ul as any).append(pagination.render());
+      }
     } else {
       this.talkee.components.expansion.expand();
       (this.ul as any).innerHTML = `<div class=${this.talkee.classes(
