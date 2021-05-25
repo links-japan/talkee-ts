@@ -95,8 +95,7 @@ export class Talkee {
       console.error("failed to auth", e);
     }
 
-    const { loginRedirect = true } = this.opts;
-    if (loginRedirect && helper.getRedirect()) {
+    if (helper.getRedirect()) {
       window.location.replace(helper.getRedirect() ?? "");
       return;
     }
@@ -460,7 +459,8 @@ export class Talkee {
       // auth and get the token
       await this.auth(query.code);
     } else {
-      helper.setRedirect();
+      const { redirectHash = true } = opts;
+      helper.setRedirect(redirectHash);
     }
 
     // redirect to
