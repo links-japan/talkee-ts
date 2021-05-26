@@ -105,7 +105,8 @@ export default class SubComments {
         );
         resp.creator = helper.getProfile();
       } catch (e) {
-        helper.errmsg(e);
+        const { onError } = this.talkee.opts;
+        typeof onError === "function" ? onError(e) : helper.errmsg(e);
         return;
       }
       this.ul?.prepend(this.talkee.buildCommentUI(resp, this.comment));

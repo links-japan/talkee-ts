@@ -113,7 +113,8 @@ export class Talkee {
         myComment = await apis.postComment(this.slug, text, this.apiBase);
       } catch (e) {
         if (e.response && e.response.status === 429) {
-          return helper.errmsg(e);
+          const { onError } = this.opts;
+          return typeof onError === "function" ? onError(e) : helper.errmsg(e);
         }
         helper.removeAuth();
       }
