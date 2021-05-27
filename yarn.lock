@@ -829,6 +829,14 @@
     "@babel/helper-validator-option" "^7.12.17"
     "@babel/plugin-transform-typescript" "^7.13.0"
 
+"@babel/runtime-corejs2@^7.5.4":
+  version "7.14.0"
+  resolved "https://registry.npmjs.org/@babel/runtime-corejs2/-/runtime-corejs2-7.14.0.tgz#5519b92ccc819bd3d0a1ecb25ab3cb5a775485f8"
+  integrity sha512-btR4E8JiGlmmDI5YgirlG9z3T91rBdxnVh2YuEStrHDcekffaaIeK+CE0S4IaYUyYhMa7rFDfF2GEO79XNbLEA==
+  dependencies:
+    core-js "^2.6.5"
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime-corejs3@^7.13.10":
   version "7.13.10"
   resolved "https://registry.npmjs.org/@babel/runtime-corejs3/-/runtime-corejs3-7.13.10.tgz#14c3f4c85de22ba88e8e86685d13e8861a82fe86"
@@ -2141,6 +2149,11 @@ core-js-pure@^3.0.0:
   version "3.10.0"
   resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.10.0.tgz#dab9d6b141779b622b40567e7a536d2276646c15"
   integrity sha512-CC582enhrFZStO4F8lGI7QL3SYx7/AIRc+IdSi3btrQGrVsTawo5K/crmKbRrQ+MOMhNX4v+PATn0k2NN6wI7A==
+
+core-js@^2.6.5:
+  version "2.6.12"
+  resolved "https://registry.npmjs.org/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
+  integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -4448,6 +4461,13 @@ path-type@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
+
+peeler-js@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/peeler-js/-/peeler-js-0.4.1.tgz#0c186a2bc90af41a67d645e0559b6e597b905c32"
+  integrity sha512-hKak8oVGsWZDUilS4KVYm8Ew2RNDi4KJ/Blwlj6Kvglchz6rw8aCReBdJV9EgC4N7RJhWMoLWaxlFt/51G6JOw==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.5.4"
 
 perf-regexes@^1.0.1:
   version "1.0.1"
