@@ -1,3 +1,4 @@
+import { listenKeyboard } from "peeler-js";
 import helper from "../utils/helper";
 import apis from "../apis";
 import { $e } from "../utils/dom";
@@ -84,7 +85,13 @@ export default class SubComments {
     const subCommentsEditor = $e("textarea", {
       className: this.talkee.classes("sub-comments-editor"),
       placeholder: $t("sub_comment_placeholder"),
-    });
+    }) as HTMLTextAreaElement;
+
+    const { onKeyboardRise, onKeyboardFold } = this.talkee.opts;
+    if (onKeyboardRise || onKeyboardFold) {
+      listenKeyboard(subCommentsEditor, onKeyboardRise, onKeyboardFold);
+    }
+
     editorWrapper.appendChild(subCommentsEditor);
 
     const subCommentsSubmit = $e("button", {

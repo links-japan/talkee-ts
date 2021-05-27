@@ -7,6 +7,7 @@ import { $t } from "./i18n";
 import views from "./views/index";
 import { API_BASE, LOGIN_URL, DEFAULT_AVATAR } from "./constants";
 import _ from "lodash";
+import { listenKeyboard } from "peeler-js";
 
 const $e = function (tag: string, opts: Record<string, any>) {
   const el = document.createElement(tag);
@@ -321,7 +322,11 @@ export class Talkee {
     const editorArea = $e("textarea", {
       className: self.classes("editor-area", "textarea"),
       placeholder: $t("comment_placeholder"),
-    });
+    }) as HTMLTextAreaElement;
+    const { onKeyboardRise, onKeyboardFold } = this.opts;
+    if (onKeyboardRise || onKeyboardFold) {
+      listenKeyboard(editorArea, onKeyboardRise, onKeyboardFold);
+    }
     editorArea.addEventListener("input", function (e) {
       if (!self.editorArea) return;
       self.editorArea.style.height = "5px";
