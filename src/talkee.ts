@@ -402,16 +402,21 @@ export class Talkee {
     this.components.comments = comments;
 
     // build expansion panel
-    const expansion = new views.Expansion(this, {
-      expanded: this.expandable,
-      expand: () => {
-        this.expandable = false;
-        this.container?.children[0].classList.remove("expandable");
-        (expansion.element as any).style.display = "none";
-      },
-    });
-    this.components.expansion = expansion;
-    this.container?.children[0].append(expansion.render());
+    const { expansion = true } = this.opts?.render || {};
+    if (expansion) {
+      const expansion = new views.Expansion(this, {
+        expanded: this.expandable,
+        expand: () => {
+          this.expandable = false;
+          this.container?.children[0].classList.remove("expandable");
+          (expansion.element as any).style.display = "none";
+        },
+      });
+      this.components.expansion = expansion;
+      this.container?.children[0].append(expansion.render());
+    } else {
+      this.container?.children[0].classList.remove("expandable");
+    }
   };
 
   public buildLoginURL = () => {
@@ -487,7 +492,7 @@ export class Talkee {
           }
         }
         if (commentId) {
-          this.components.expansion.expand();
+          this.components.expansion?.expand?.();
           // fetch the comment and prepend to the list
           await this.components.comments.locate(commentId);
           if (replyId !== "") {
