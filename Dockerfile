@@ -4,7 +4,7 @@ WORKDIR /usr/share/nginx/html
 
 COPY . .
 ENV APP_ENV=prod
-ENV API_BASE=https://links-login.getlinks.jp/api
+ENV API_BASE=https://links-login-api.getlinks.jp/api
 ENV LOGIN_BASE=https://oauth.getlinks.jp
 ENV CLIENT_ID=3a6c513a-a189-4586-a0f8-cba80ed84de8
 RUN yarn
