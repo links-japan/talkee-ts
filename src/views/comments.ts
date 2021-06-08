@@ -48,7 +48,7 @@ export default class Comments {
       this.page = page;
       (this.spotlight as any).innerHTML = "";
       await this.reload();
-      (this.element as any).scrollIntoView();
+      (this.talkee.container as any).scrollIntoView();
     };
 
     (this.ul as any).innerHTML = "";
@@ -77,14 +77,14 @@ export default class Comments {
         "no_comment_hint"
       )}</div>`;
     }
-    return 0;
+    return ret;
   }
 
   async locate(commentId) {
     // fetch the comment, and append it to the top
     const comment: any = await apis.getComment(commentId);
     this.spotlight?.append(this.talkee.buildCommentUI(comment, null));
-    this.spotlight?.scrollIntoView();
+    this.talkee.container?.scrollIntoView();
   }
 
   prepend(comments) {

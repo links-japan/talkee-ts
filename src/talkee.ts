@@ -49,7 +49,7 @@ export const Talkee = function (opts: Record<string, any>) {
   };
 
   this.sendComment = async function () {
-    const area = this.commentsContainer.querySelector(".textarea");
+    const area = this.container.querySelector(".textarea");
     const text = area.value.trim();
     if (text.length !== 0) {
       let myComment: any = null;
@@ -72,8 +72,8 @@ export const Talkee = function (opts: Record<string, any>) {
 
   // controller methods
   this.checkTextareaStatus = function (area) {
-    const btn = this.commentsContainer.querySelector(".talkee-editor-submit");
-    const hint = this.commentsContainer.querySelector(".talkee-editor-hint");
+    const btn = this.container.querySelector(".talkee-editor-submit");
+    const hint = this.container.querySelector(".talkee-editor-hint");
     if (area.value.trim().length === 0 || area.value.trim().length > 512) {
       btn.disabled = true;
       if (area.value.trim().length > 512) {
@@ -88,29 +88,30 @@ export const Talkee = function (opts: Record<string, any>) {
   };
 
   this.applySortMethod = async (method, keepSpotlight = false) => {
-    this.commentsContainer
+    this.container
       .querySelectorAll(".talkee-sort-button")
       .forEach(function (x) {
         x.disabled = false;
       });
     if (method === "id") {
-      this.commentsContainer.querySelector(
+      this.container.querySelector(
         ".talkee-sort-by-id-desc-button"
       ).disabled = true;
     } else if (method === "id-asc") {
-      this.commentsContainer.querySelector(
+      this.container.querySelector(
         ".talkee-sort-by-id-asc-button"
       ).disabled = true;
     } else {
-      this.commentsContainer.querySelector(
+      this.container.querySelector(
         ".talkee-sort-by-fav-button"
       ).disabled = true;
     }
     this.sortMethod = method;
-    await this.components.comments.reload({
+    const resp = await this.components.comments.reload({
       order: method,
       keepSpotlight,
     });
+    this.components.sortbar.setProps({ total: resp.total });
   };
 
   // views related
@@ -287,8 +288,8 @@ export const Talkee = function (opts: Record<string, any>) {
   };
 
   this.buildLoadingUI = function () {
-    if (this.commentsContainer) {
-      this.commentsContainer.innerHTML =
+    if (this.container) {
+      this.container.innerHTML =
         '<div class="talkee">' +
         '<div class="talkee-loading>' +
         $t("loading") +
@@ -298,20 +299,20 @@ export const Talkee = function (opts: Record<string, any>) {
   };
 
   this.buildTalkeeUI = () => {
-    this.commentsContainer.innerHTML = `<div class="talkee ${
+    this.container.innerHTML = `<div class="talkee ${
       this.expandable ? "expandable" : ""
     }"></div>`;
 
     // build talkee sort bar
-    const sortbar = new views.SortBar(this, { total: this.total });
-    this.commentsContainer?.children[0].append(sortbar.render());
+    this.components.sortbar = new views.SortBar(this, { total: this.total });
+    this.container?.children[0].append(this.components.sortbar.render());
 
     // build talkee editor
-    this.buildEditorUI(this.commentsContainer.children[0]);
+    this.buildEditorUI(this.container.children[0]);
 
     // comments list
     const comments = new views.Comments(this, {});
-    this.commentsContainer.children[0].appendChild(comments.render());
+    this.container.children[0].appendChild(comments.render());
     this.components.comments = comments;
 
     // build expansion panel
@@ -319,12 +320,12 @@ export const Talkee = function (opts: Record<string, any>) {
       expanded: this.expandable,
       expand: () => {
         this.expandable = false;
-        this.commentsContainer.children[0].classList.remove("expandable");
+        this.container.children[0].classList.remove("expandable");
         (expansion.element as any).style.display = "none";
       },
     });
     this.components.expansion = expansion;
-    this.commentsContainer?.children[0].append(expansion.render());
+    this.container?.children[0].append(expansion.render());
   };
 
   this.init = async function () {
@@ -341,9 +342,9 @@ export const Talkee = function (opts: Record<string, any>) {
     // apis params
     apis.setDefaultParams({ site_id: this.siteId, slug: this.slug });
 
-    this.commentsContainer = opts.commentSelector;
-    if (this.commentsContainer.constructor === String) {
-      this.commentsContainer = document.querySelector(this.commentsContainer);
+    this.container = opts.commentSelector;
+    if (this.container.constructor === String) {
+      this.container = document.querySelector(this.container);
     }
 
     this.buildLoadingUI();
@@ -382,7 +383,7 @@ export const Talkee = function (opts: Record<string, any>) {
             await this.components.comments.expand();
           }
         } else {
-          this.commentsContainer.scrollIntoView();
+          this.container.scrollIntoView();
         }
       }, 1000);
     }
