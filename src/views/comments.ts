@@ -66,10 +66,11 @@ export default class Comments {
       }
 
       const { hidePaginationWhenSinglePage } = this.talkee.opts;
-      if (!hidePaginationWhenSinglePage) {
+      const totalPage = Math.ceil(this.total / this.ipp);
+      if (!hidePaginationWhenSinglePage || totalPage > 1) {
         const pagination = new Pagination(this.talkee, {
           page: this.page,
-          totalPage: Math.ceil(this.total / this.ipp),
+          totalPage,
           prev: proc,
           next: proc,
           locate: proc,
