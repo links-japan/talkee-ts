@@ -1,6 +1,6 @@
 {
   "name": "@links-japan/talkee",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "The talkee plugin sdk",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -30,7 +30,7 @@
     "@babel/preset-env": "^7.13.12",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime-corejs3": "^7.13.10",
-    "@omni-door/cli": "^2.4.3",
+    "@omni-door/cli": "^2.4.7",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-image": "^2.0.6",
