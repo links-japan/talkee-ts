@@ -7,7 +7,7 @@ import { $t } from "./i18n";
 import views from "./views/index";
 import { API_BASE, LOGIN_URL, DEFAULT_AVATAR } from "./constants";
 import _ from "lodash";
-import { listenKeyboard } from "peeler-js";
+import { listenKeyboard } from "peeler-js/es/listenKeyboard";
 
 const $e = function (tag: string, opts: Record<string, any>) {
   const el = document.createElement(tag);

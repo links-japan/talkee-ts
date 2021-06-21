@@ -1,4 +1,4 @@
-import { listenKeyboard } from "peeler-js";
+import { listenKeyboard } from "peeler-js/es/listenKeyboard";
 import helper from "../utils/helper";
 import apis from "../apis";
 import { $e } from "../utils/dom";
