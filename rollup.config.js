@@ -52,7 +52,7 @@ module.exports = function (config) {
     input: "src/index.ts",
     output: [
       {
-        file: `umd/talkee.min.latest.js`,
+        file: `umd/talkee.min.js`,
         format: "umd",
         name: "Talkee",
         exports: "default",

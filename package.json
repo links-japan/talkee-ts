@@ -4,6 +4,7 @@
   "description": "The talkee plugin sdk",
   "main": "lib/index.js",
   "module": "es/index.js",
+  "unpkg": "umd/",
   "typings": "lib/index.d.ts",
   "scripts": {
     "dev": "nodemon --watch src --watch .env --watch server.js -e js,ts,jsx,tsx,json,css,scss -x 'npm run dev:run'",
@@ -30,7 +31,7 @@
     "@babel/preset-env": "^7.13.12",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime-corejs3": "^7.13.10",
-    "@omni-door/cli": "^2.4.7",
+    "@omni-door/cli": "~2.4.9",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-image": "^2.0.6",
