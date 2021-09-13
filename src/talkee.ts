@@ -140,9 +140,13 @@ export class Talkee {
       `.${this.classes("editor-hint")}`
     ) as HTMLElement;
     if (!btn || !hint) return;
-    if (area.value.trim().length === 0 || area.value.trim().length > 512) {
+    const { commentLength = 512 } = this.opts;
+    if (
+      area.value.trim().length === 0 ||
+      area.value.trim().length > commentLength
+    ) {
       btn.disabled = true;
-      if (area.value.trim().length > 512) {
+      if (area.value.trim().length > commentLength) {
         hint.style.visibility = "visible";
       } else {
         hint.style.visibility = "hidden";
