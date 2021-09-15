@@ -53,7 +53,7 @@ export default class Metabar {
         ),
         innerText: `${
           this.comment.reply_count
-            ? `${this.comment.reply_count}` + $t("reply")
+            ? `${this.comment.reply_count} ` + $t("reply")
             : $t("click_to_reply")
         }`,
       });

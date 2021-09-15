@@ -431,15 +431,16 @@ export class Talkee {
       })
     );
     const stateInd = this.loginUrl.indexOf("state=");
+    let loginUrl;
     if (!!~stateInd) {
-      this.loginUrl =
+      loginUrl =
         this.loginUrl.slice(0, stateInd + 6) +
         state +
         this.loginUrl.slice(stateInd + 6);
     } else {
-      this.loginUrl = this.loginUrl + `&state=${state}`;
+      loginUrl = this.loginUrl + `&state=${state}`;
     }
-    return this.loginUrl;
+    return loginUrl;
   };
 
   private init = async () => {
