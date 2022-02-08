@@ -1,0 +1,22 @@
+name = "talkee-js"
+type = "webpack"
+account_id = "d3aadb237e2e02da43991b05995ac2a2"
+workers_dev = true
+# usage_model = ''
+compatibility_flags = []
+compatibility_date = "2022-02-08"
+
+[env.production]
+zone_id = '6bcd3fe8966f3f2b71d41679d90dd801'
+route = "talkee.getlinks.jp/*"
+
+[env.staging]
+zone_id = 'd728ef4fc80a9717da89f08fcfab8e87'
+name = "talkee-js-staging"
+route = "talkee.chrove.com/*"
+
+[site]
+bucket = "./umd"
+entry-point = "workers-site"
+
+
