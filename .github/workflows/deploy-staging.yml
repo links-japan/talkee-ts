@@ -33,7 +33,7 @@ jobs:
       # build
       - run: yarn --frozen-lockfile --non-interactive
 
-      - run: APP_ENV=${{ env.NODE_ENV }} yarn generate
+      - run: APP_ENV=${{ env.NODE_ENV }} yarn build
 
       # publish to worker site
       - name: Publish
