@@ -58,6 +58,13 @@ module.exports = function (config) {
         exports: "default",
         compact: true,
       },
+      {
+        file: `umd/talkee.min.latest.js`,
+        format: "umd",
+        name: "Talkee",
+        exports: "default",
+        compact: true,
+      },
     ],
     plugins: defaultPlugins,
   });
