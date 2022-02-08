@@ -53,61 +53,77 @@ const request = async function (opts): Promise<any> {
   });
 };
 
-const getMe = async function () {
+const getMe = async function (baseURL: string) {
   return await request({
+    baseURL,
     method: "get",
     url: "/me",
   });
 };
 
-const auth = async function (code) {
+const auth = async function (code, baseURL: string) {
   return await request({
+    baseURL,
     method: "post",
     url: "/auth",
     data: { code },
   });
 };
 
-const getComment = (id): Promise<IComment> => {
+const getComment = (id, baseURL: string): Promise<IComment> => {
   return request({
+    baseURL,
     method: "get",
     url: "/comment/" + id,
   });
 };
 
-const getComments = (order, page): Promise<Array<IComment>> => {
+const getComments = (
+  order,
+  page,
+  baseURL: string
+): Promise<Array<IComment>> => {
   return request({
+    baseURL,
     method: "get",
     url: "/comments",
     params: { order_key: order, page: page },
   });
 };
 
-const postComment = (slug, content): Promise<IComment> => {
+const postComment = (slug, content, baseURL: string): Promise<IComment> => {
   return request({
+    baseURL,
     method: "POST",
     url: "/comments",
     data: { slug, content },
   });
 };
 
-const putFavor = ({ objType, objId }) => {
+const putFavor = ({ objType, objId, baseURL }) => {
   return request({
+    baseURL,
     method: "POST",
     url: "/favor/",
     data: { type: objType, id: objId },
   });
 };
 
-const putUnfavor = (favId) => {
+const putUnfavor = (favId, baseURL: string) => {
   request({
+    baseURL,
     method: "DELETE",
     url: "/favor/" + favId,
   });
 };
 
-const postSubComment = (commentId, content): Promise<IComment> => {
+const postSubComment = (
+  commentId,
+  content,
+  baseURL: string
+): Promise<IComment> => {
   return request({
+    baseURL,
     method: "POST",
     url: "/replies",
     data: { comment_id: commentId, content },
@@ -118,9 +134,11 @@ const getSubComments = (
   comment_id,
   order,
   page,
-  ipp
+  ipp,
+  baseURL: string
 ): Promise<Array<IComment>> => {
   return request({
+    baseURL,
     method: "GET",
     url: "/replies",
     params: { comment_id, order_key: order, page, ipp },

@@ -1,12 +1,35 @@
 # The talkee plugin
 
-run `python -m http.server 8084` in the directory and visit http://localhost:8084
+## Install
+
+### NPM
+
+```shell
+npm install @links-japan/talkee
+# or
+yarn add @links-japan/talkee
+```
+
+### CDN
+
+```html
+<style
+  href="https://unpkg.com/@links-japan/talkee@latest/umd/talkee.min.css"
+></style>
+<script src="https://unpkg.com/@links-japan/talkee@latest/umd/talkee.min.js"></script>
+```
 
 ## init
 
 ```shell
 yarn
 ```
+
+## dev
+
+run `python -m http.server 8084` in the directory and visit http://localhost:8084
+
+or just run `yarn dev`
 
 ## build
 

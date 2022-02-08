@@ -6,7 +6,6 @@
 .vscode
 build
 src
-umd
 *test*
 node_modules
 .omni_cache
@@ -14,17 +13,21 @@ dist
 dist.zip
 
 index.html
+server.js
+declaration.d.ts
 
 # config files
 .eslintignore
 .eslintrc.js
 .gitignore
 *.config.js
+rollup.config.dev.js
 *.conf.js
 tsconfig.json
 .umirc*
-.env
+.env*
 
+Dockerfile*
 _config.yml
 .nyc_output
 .travis.yml

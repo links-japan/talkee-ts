@@ -1,11 +1,13 @@
 import helper from "./utils/helper";
 import Base64 from "./utils/base64";
+import classnames from "./utils/classnames";
 import icons from "./icons/index";
 import apis from "./apis";
 import { $t } from "./i18n";
 import views from "./views/index";
 import { API_BASE, LOGIN_URL, DEFAULT_AVATAR } from "./constants";
 import _ from "lodash";
+import { listenKeyboard } from "peeler-js/es/listenKeyboard";
 
 const $e = function (tag: string, opts: Record<string, any>) {
   const el = document.createElement(tag);
@@ -19,45 +21,101 @@ const $e = function (tag: string, opts: Record<string, any>) {
 };
 
 // Talkee contructor
-export const Talkee = function (opts: Record<string, any>) {
-  this.editorArea = null;
-  this.repliedCommentId = null;
-  this.repliedUserId = null;
-  this.apiBase = "";
-  this.slug = "";
-  this.isSigned = false;
-  this.sortMethod = "favor_count";
-  this.page = 1;
-  this.total = 0;
-  this.itemPerPage = 10;
-  this.totalPage = 1;
-  this.components = {};
+export class Talkee {
+  static getUrlQuery = helper.getUrlQuery;
 
-  this.auth = async function (code) {
+  private _isLogin: boolean;
+  private repliedCommentId: string | null;
+  private repliedUserId: string | null;
+  private page: number;
+  private itemPerPage: number;
+  private totalPage: number;
+  private editorArea: HTMLElement | null;
+  private sortMethod: string;
+  private total: number;
+  private profile: null | Record<string, any>;
+  private expandable: boolean;
+  private defaultAvatarUrl: string;
+  private prefixCls: string;
+
+  public apiBase: string;
+  public loginUrl: string;
+  public container: null | HTMLElement;
+  public components: Record<string, any>;
+  public slug: string;
+  public isSigned: boolean;
+  public siteId: string;
+  public tweetTags: any[];
+  public opts: Record<string, any>;
+
+  public constructor(opts: Record<string, any>) {
+    this._isLogin = false;
+    this.opts = opts;
+    this.editorArea = null;
+    this.repliedCommentId = null;
+    this.repliedUserId = null;
+    this.apiBase = "";
+    this.slug = "";
+    this.isSigned = false;
+    this.sortMethod = "favor_count";
+    this.page = 1;
+    this.total = 0;
+    this.itemPerPage = 10;
+    this.totalPage = 1;
+    this.components = {};
+    this.container = null;
+    this.profile = null;
+    this.loginUrl = "";
+    this.siteId = "";
+    this.tweetTags = [];
+    this.expandable = false;
+    this.defaultAvatarUrl = "";
+    this.prefixCls = "talkee";
+
+    setTimeout(() => {
+      this.init();
+    }, 200);
+  }
+
+  public get classes() {
+    return classnames(this.prefixCls);
+  }
+
+  public get isLogin() {
+    return this._isLogin || !!helper.getProfile();
+  }
+
+  public auth = async (code) => {
     try {
-      await apis.auth(code);
+      await apis.auth(code, this.apiBase);
       // redirect if possible
-      const me: any = await apis.getMe();
+      const me: any = await apis.getMe(this.apiBase);
       helper.setProfile(me);
+      this._isLogin = true;
     } catch (e) {
-      console.log("failed to auth", e);
+      console.error("failed to auth", e);
     }
+
     if (helper.getRedirect()) {
       window.location.replace(helper.getRedirect() ?? "");
       return;
     }
   };
 
-  this.sendComment = async function () {
-    const area = this.container.querySelector(".textarea");
-    const text = area.value.trim();
+  public sendComment = async () => {
+    if (!this.container) return;
+    const area = this.container.querySelector(
+      ".textarea"
+    ) as HTMLTextAreaElement;
+    const text = area?.value.trim();
     if (text.length !== 0) {
       let myComment: any = null;
       try {
-        myComment = await apis.postComment(this.slug, text);
+        myComment = await apis.postComment(this.slug, text, this.apiBase);
       } catch (e) {
         if (e.response && e.response.status === 429) {
-          return helper.errmsg(e);
+          const { onError } = this.opts;
+          return typeof onError === "function" ? onError(e) : helper.errmsg(e);
         }
         helper.removeAuth();
       }
@@ -65,18 +123,30 @@ export const Talkee = function (opts: Record<string, any>) {
         area.value = "";
         area.style.height = "5px";
         myComment.creator = this.profile;
-        this.components.comments.prepend([myComment]);
+        this.components.comments.prepend([myComment] as any);
+        const hint = document.querySelector(
+          `.${this.classes("no-comment-hint")}`
+        ) as HTMLElement;
+        hint.style.display = "none";
       }
     }
   };
 
-  // controller methods
-  this.checkTextareaStatus = function (area) {
-    const btn = this.container.querySelector(".talkee-editor-submit");
-    const hint = this.container.querySelector(".talkee-editor-hint");
-    if (area.value.trim().length === 0 || area.value.trim().length > 512) {
+  public checkTextareaStatus = (area) => {
+    const btn = this.container?.querySelector(
+      `.${this.classes("editor-submit")}`
+    ) as HTMLButtonElement;
+    const hint = this.container?.querySelector(
+      `.${this.classes("editor-hint")}`
+    ) as HTMLElement;
+    if (!btn || !hint) return;
+    const { commentLength = 512 } = this.opts;
+    if (
+      area.value.trim().length === 0 ||
+      area.value.trim().length > commentLength
+    ) {
       btn.disabled = true;
-      if (area.value.trim().length > 512) {
+      if (area.value.trim().length > commentLength) {
         hint.style.visibility = "visible";
       } else {
         hint.style.visibility = "hidden";
@@ -87,67 +157,76 @@ export const Talkee = function (opts: Record<string, any>) {
     }
   };
 
-  this.applySortMethod = async (method, keepSpotlight = false) => {
+  public applySortMethod = async (method, keepSpotlight = false) => {
     this.container
-      .querySelectorAll(".talkee-sort-button")
-      .forEach(function (x) {
+      ?.querySelectorAll(`.${this.classes("sort-button")}`)
+      .forEach(function (x: any) {
         x.disabled = false;
       });
     if (method === "id") {
-      this.container.querySelector(
-        ".talkee-sort-by-id-desc-button"
+      (
+        this.container?.querySelector(
+          `.${this.classes("sort-by-id-desc-button")}`
+        ) as HTMLButtonElement
       ).disabled = true;
     } else if (method === "id-asc") {
-      this.container.querySelector(
-        ".talkee-sort-by-id-asc-button"
+      (
+        this.container?.querySelector(
+          `.${this.classes("sort-by-id-asc-button")}`
+        ) as HTMLButtonElement
       ).disabled = true;
     } else {
-      this.container.querySelector(
-        ".talkee-sort-by-fav-button"
+      (
+        this.container?.querySelector(
+          `.${this.classes("sort-by-fav-button")}`
+        ) as HTMLButtonElement
       ).disabled = true;
     }
     this.sortMethod = method;
-    const resp = await this.components.comments.reload({
+    const resp = await (this.components.comments as any).reload({
       order: method,
       keepSpotlight,
     });
-    this.components.sortbar.setProps({ total: resp.total });
+    (this.components.sortbar as any).setProps({ total: resp.total });
   };
 
-  // views related
-  this.buildCommentUI = function (comment, fatherComment = null) {
+  public buildCommentUI = (comment, fatherComment = null) => {
     const self = this;
     const commentCan = $e("div", {
-      id: "talkee-comment-" + comment.id,
-      className: `talkee-comment ${fatherComment ? "sub" : ""}`,
+      id: self.classes("comment") + "-" + comment.id,
+      className: self.classes("comment", fatherComment ? "sub" : ""),
     });
 
     // left
-    const commentLeft = $e("div", { className: "talkee-comment-left" });
+    const commentLeft = $e("div", { className: self.classes("comment-left") });
 
     // avatar
     const commentAvatar = $e("img", {
-      className: "talkee-comment-avatar",
+      className: self.classes("comment-avatar"),
       src: comment.creator["avatar_url"] || self.defaultAvatarUrl,
     });
     commentLeft.appendChild(commentAvatar);
     commentCan.appendChild(commentLeft);
 
     // right
-    const commentRight = $e("div", { className: "talkee-comment-right" });
+    const commentRight = $e("div", {
+      className: self.classes("comment-right"),
+    });
 
     // right top
-    const commentRT = $e("div", { className: "talkee-comment-right-top" });
+    const commentRT = $e("div", {
+      className: self.classes("comment-right-top"),
+    });
 
     // right top > name
     const commentName = $e("a", {
-      className: "talkee-comment-name surprise",
+      className: self.classes("comment-name", "surprise"),
       innerText: comment.creator["full_name"],
     });
 
     // right top > time
     const commentTime = $e("span", {
-      className: "talkee-comment-time",
+      className: self.classes("comment-time"),
       innerText: helper.formatTime(comment["created_at"]),
     });
     commentRT.appendChild(commentName);
@@ -155,15 +234,15 @@ export const Talkee = function (opts: Record<string, any>) {
 
     if (comment.reward && comment.reward.amount) {
       const commentReward = $e("span", {
-        className: `talkee-comment-reward`,
+        className: self.classes("comment-reward"),
       });
       const commentRewardIcon = $e("span", {
-        className: "talkee-comment-reward-icon",
+        className: self.classes("comment-reward-icon"),
       });
       commentRewardIcon.style.backgroundImage =
         'url("' + icons.badgeIcon + '")';
       const commentRewardText = $e("span", {
-        className: "talkee-comment-reward-text",
+        className: self.classes("comment-reward-text"),
         innerText: `${comment.reward.amount} Satoshi`,
       });
 
@@ -175,7 +254,9 @@ export const Talkee = function (opts: Record<string, any>) {
     commentRight.appendChild(commentRT);
 
     // content
-    const commentContent = $e("div", { className: "talkee-comment-content" });
+    const commentContent = $e("div", {
+      className: self.classes("comment-content"),
+    });
     let commentText: string = "";
     let moreButton: any = null;
     if (comment.content.length < 160) {
@@ -183,7 +264,7 @@ export const Talkee = function (opts: Record<string, any>) {
     } else {
       commentText = helper.parseText(comment.content.slice(0, 160));
       moreButton = $e("a", {
-        className: "talkee-comment-content-more",
+        className: self.classes("comment-content-more"),
         innerText: $t("content_more"),
       });
       moreButton.addEventListener("click", () => {
@@ -201,17 +282,23 @@ export const Talkee = function (opts: Record<string, any>) {
       commentRight.appendChild(moreButton);
     }
 
-    const metabar = new views.MetaBar(this, {
-      comment: comment,
-      father: fatherComment,
-      type: fatherComment ? "reply" : "comment",
-    });
-    commentRight.append(metabar.render());
+    const { subcomment = true, metabar: renderMetaBar = true } =
+      this?.opts?.render ?? {};
+
+    let metabar;
+    if (renderMetaBar) {
+      metabar = new views.MetaBar(this, {
+        comment: comment,
+        father: fatherComment,
+        type: fatherComment ? "reply" : "comment",
+      });
+      commentRight.append(metabar.render());
+    }
 
     // sub comments
-    if (fatherComment === null) {
+    if (fatherComment === null && subcomment) {
       const subComments = new views.SubComments(this, comment);
-      metabar.connect(subComments);
+      metabar?.connect(subComments);
       commentRight.append(subComments.render());
     }
 
@@ -219,28 +306,33 @@ export const Talkee = function (opts: Record<string, any>) {
     return commentCan;
   };
 
-  this.buildEditorUI = function (container) {
+  public buildEditorUI = (container) => {
     const self = this;
-    const editorCan = $e("div", { className: "talkee-editor" });
+    const editorCan = $e("div", { className: self.classes("editor") });
     // left
-    const editorLeft = $e("div", { className: "talkee-editor-left" });
+    const editorLeft = $e("div", { className: self.classes("editor-left") });
     // avatar
     const editorAvatar = $e("img", {
-      className: "talkee-editor-avatar",
-      src: this.profile
-        ? this.profile.avatar_url || self.defaultAvatarUrl
+      className: self.classes("editor-avatar"),
+      src: self.profile
+        ? self.profile.avatar_url || self.defaultAvatarUrl
         : self.defaultAvatarUrl,
     });
     editorLeft.appendChild(editorAvatar);
     editorCan.appendChild(editorLeft);
 
     // .talkee-editor > editor area
-    const editorRight = $e("div", { className: "talkee-editor-right" });
+    const editorRight = $e("div", { className: self.classes("editor-right") });
     const editorArea = $e("textarea", {
-      className: "talkee-editor-area textarea",
+      className: self.classes("editor-area", "textarea"),
       placeholder: $t("comment_placeholder"),
-    });
+    }) as HTMLTextAreaElement;
+    const { onKeyboardRise, onKeyboardFold } = this.opts;
+    if (onKeyboardRise || onKeyboardFold) {
+      listenKeyboard(editorArea, onKeyboardRise, onKeyboardFold);
+    }
     editorArea.addEventListener("input", function (e) {
+      if (!self.editorArea) return;
       self.editorArea.style.height = "5px";
       self.editorArea.style.height = self.editorArea.scrollHeight + "px";
     });
@@ -256,9 +348,9 @@ export const Talkee = function (opts: Record<string, any>) {
     editorRight.appendChild(editorArea);
     this.editorArea = editorArea;
 
-    const editorCtrl = $e("div", { className: "talkee-editor-ctrl" });
+    const editorCtrl = $e("div", { className: self.classes("editor-ctrl") });
     const editorSubmit = $e("button", {
-      className: "talkee-editor-submit",
+      className: self.classes("editor-submit"),
       innerText: $t("submit"),
       disabled: true,
     });
@@ -266,7 +358,7 @@ export const Talkee = function (opts: Record<string, any>) {
       self.sendComment();
     });
     const hint = $e("div", {
-      className: "talkee-editor-hint",
+      className: self.classes("editor-hint"),
       innerText: $t("too_many_charactors"),
     });
     editorCtrl.appendChild(hint);
@@ -277,31 +369,29 @@ export const Talkee = function (opts: Record<string, any>) {
 
     // disabled editor
     if (!self.isSigned) {
-      const editorMask = new views.EditorMask(self, {
-        siteId: self.siteId,
-        slug: self.slug,
-        loginUrl: self.loginUrl,
-      });
+      const editorMask = new views.EditorMask(self);
       editorCan.appendChild(editorMask.render());
     }
     container.appendChild(editorCan);
   };
 
-  this.buildLoadingUI = function () {
+  public buildLoadingUI = () => {
     if (this.container) {
       this.container.innerHTML =
-        '<div class="talkee">' +
-        '<div class="talkee-loading>' +
+        `<div class="${this.classes()}">` +
+        `<div class="${this.classes("loading")}>` +
         $t("loading") +
         "</div>" +
         "</div>";
     }
   };
 
-  this.buildTalkeeUI = () => {
-    this.container.innerHTML = `<div class="talkee ${
+  public buildTalkeeUI = () => {
+    if (!this.container) return;
+    this.container.innerHTML = `<div class="${this.classes(
+      void 0,
       this.expandable ? "expandable" : ""
-    }"></div>`;
+    )}"></div>`;
 
     // build talkee sort bar
     this.components.sortbar = new views.SortBar(this, { total: this.total });
@@ -316,34 +406,65 @@ export const Talkee = function (opts: Record<string, any>) {
     this.components.comments = comments;
 
     // build expansion panel
-    const expansion = new views.Expansion(this, {
-      expanded: this.expandable,
-      expand: () => {
-        this.expandable = false;
-        this.container.children[0].classList.remove("expandable");
-        (expansion.element as any).style.display = "none";
-      },
-    });
-    this.components.expansion = expansion;
-    this.container?.children[0].append(expansion.render());
+    const { expansion = true } = this.opts?.render || {};
+    if (expansion) {
+      const expansion = new views.Expansion(this, {
+        expanded: this.expandable,
+        expand: () => {
+          this.expandable = false;
+          this.container?.children[0].classList.remove("expandable");
+          (expansion.element as any).style.display = "none";
+        },
+      });
+      this.components.expansion = expansion;
+      this.container?.children[0].append(expansion.render());
+    } else {
+      this.container?.children[0].classList.remove("expandable");
+    }
   };
 
-  this.init = async function () {
-    console.log("talkee options:", opts);
+  public buildLoginURL = () => {
+    const state = Base64.encode(
+      JSON.stringify({
+        s: this.siteId,
+        p: this.slug,
+      })
+    );
+    const stateInd = this.loginUrl.indexOf("state=");
+    let loginUrl;
+    if (!!~stateInd) {
+      loginUrl =
+        this.loginUrl.slice(0, stateInd + 6) +
+        state +
+        this.loginUrl.slice(stateInd + 6);
+    } else {
+      loginUrl = this.loginUrl + `&state=${state}`;
+    }
+    return loginUrl;
+  };
+
+  private init = async () => {
+    const opts = this.opts;
+    console.log("init talkee options:", opts);
 
     this.apiBase = opts.apiBase || API_BASE;
-    this.loginUrl = opts.loginUrl || LOGIN_URL;
+    this.loginUrl =
+      opts.loginUrl ||
+      (opts.loginBase && opts.clientId
+        ? `${opts.loginBase}?client_id=${opts.clientId}&scope=PROFILE:READ+PHONE:READ&state=`
+        : LOGIN_URL);
     this.slug = opts.slug;
     this.siteId = opts.siteId;
     this.tweetTags = opts.tweetTags || [];
     this.expandable = opts.expandable || false;
     this.defaultAvatarUrl = opts.defaultAvatarUrl || DEFAULT_AVATAR;
+    this.prefixCls = opts.prefixCls || this.prefixCls;
 
     // apis params
     apis.setDefaultParams({ site_id: this.siteId, slug: this.slug });
 
     this.container = opts.commentSelector;
-    if (this.container.constructor === String) {
+    if (this.container?.constructor === String) {
       this.container = document.querySelector(this.container);
     }
 
@@ -354,7 +475,8 @@ export const Talkee = function (opts: Record<string, any>) {
       // auth and get the token
       await this.auth(query.code);
     } else {
-      helper.setRedirect();
+      const { redirectHash = true } = opts;
+      helper.setRedirect(redirectHash);
     }
 
     // redirect to
@@ -375,7 +497,7 @@ export const Talkee = function (opts: Record<string, any>) {
           }
         }
         if (commentId) {
-          this.components.expansion.expand();
+          this.components.expansion?.expand?.();
           // fetch the comment and prepend to the list
           await this.components.comments.locate(commentId);
           if (replyId !== "") {
@@ -383,7 +505,7 @@ export const Talkee = function (opts: Record<string, any>) {
             await this.components.comments.expand();
           }
         } else {
-          this.container.scrollIntoView();
+          this.container?.scrollIntoView();
         }
       }, 1000);
     }
@@ -399,11 +521,20 @@ export const Talkee = function (opts: Record<string, any>) {
     }, 200);
   };
 
-  setTimeout(() => {
-    this.init();
-  }, 200);
-};
+  public setOptions(opts: Record<string, any>) {
+    this.opts = { ...this.opts, ...opts };
+    console.log("set talkee options:", opts);
+
+    this.apiBase = opts.apiBase || this.apiBase;
+    this.loginUrl = opts.loginUrl || this.loginUrl;
+    this.slug = opts.slug || this.slug;
+    this.siteId = opts.siteId || this.siteId;
+    this.tweetTags = opts.tweetTags || this.tweetTags;
+    this.expandable = opts.expandable || this.expandable;
+    this.defaultAvatarUrl = opts.defaultAvatarUrl || this.defaultAvatarUrl;
+    this.prefixCls = opts.prefixCls || this.prefixCls;
+  }
+}
 
 Talkee.getUrlQuery = helper.getUrlQuery;
-
 export default Talkee;

@@ -1,3 +1,4 @@
+import { listenKeyboard } from "peeler-js/es/listenKeyboard";
 import helper from "../utils/helper";
 import apis from "../apis";
 import { $e } from "../utils/dom";
@@ -7,8 +8,11 @@ import EditorMask from "../views/editormask";
 import "./subcomments.scss";
 import { IComment } from "../types/api";
 
+/** import types */
+import type Talkee from "../talkee";
+
 export default class SubComments {
-  talkee: any;
+  talkee: Talkee;
   comment: any;
   subComments: any;
 
@@ -21,7 +25,7 @@ export default class SubComments {
   ipp: number;
   total: number;
 
-  constructor(talkee: any, comment: any) {
+  constructor(talkee: Talkee, comment: any) {
     this.talkee = talkee;
     this.comment = comment;
     this.subComments = [];
@@ -36,7 +40,7 @@ export default class SubComments {
     this.total = 0;
   }
 
-  async fetch(append = false) {
+  public fetch = async (append = false) => {
     if (this.subComments.length !== 0 && !append) {
       return;
     }
@@ -44,7 +48,8 @@ export default class SubComments {
       this.comment.id,
       this.order,
       append ? this.page + 1 : 1,
-      this.ipp
+      this.ipp,
+      this.talkee.apiBase
     );
     this.ipp = ret.ipp;
     this.page = ret.page;
@@ -65,26 +70,35 @@ export default class SubComments {
       (this.loadMoreBtn as any).hide();
     }
     return 0;
-  }
+  };
 
-  render() {
+  public render = () => {
     const subCommentsContainer = $e("div", {
-      className: "talkee-sub-comments",
+      className: this.talkee.classes("sub-comments"),
     });
     subCommentsContainer.style.display = "none";
 
     const editorWrapper = $e("div", {
-      className: "talkee-sub-comments-editor-wrapper",
+      className: this.talkee.classes("sub-comments-editor-wrapper"),
     });
 
     const subCommentsEditor = $e("textarea", {
-      className: "talkee-sub-comments-editor",
+      className: this.talkee.classes("sub-comments-editor"),
       placeholder: $t("sub_comment_placeholder"),
-    });
+    }) as HTMLTextAreaElement;
+
+    const { onKeyboardRise, onKeyboardFold } = this.talkee.opts;
+    if (onKeyboardRise || onKeyboardFold) {
+      listenKeyboard(subCommentsEditor, onKeyboardRise, onKeyboardFold);
+    }
+
     editorWrapper.appendChild(subCommentsEditor);
 
     const subCommentsSubmit = $e("button", {
-      className: "talkee-button talkee-sub-comments-submit",
+      className: this.talkee.classes(
+        "button",
+        this.talkee.classes("sub-comments-submit")
+      ),
       innerText: $t("submit"),
     });
 
@@ -93,11 +107,13 @@ export default class SubComments {
       try {
         resp = await apis.postSubComment(
           this.comment.id,
-          (subCommentsEditor as any).value.trim()
+          (subCommentsEditor as any).value.trim(),
+          this.talkee.apiBase
         );
         resp.creator = helper.getProfile();
       } catch (e) {
-        helper.errmsg(e);
+        const { onError } = this.talkee.opts;
+        typeof onError === "function" ? onError(e) : helper.errmsg(e);
         return;
       }
       this.ul?.prepend(this.talkee.buildCommentUI(resp, this.comment));
@@ -107,18 +123,14 @@ export default class SubComments {
     editorWrapper.appendChild(subCommentsSubmit);
 
     if (!this.talkee.isSigned) {
-      const editorMask = new EditorMask(this, {
-        siteId: this.talkee.siteId,
-        slug: this.talkee.slug,
-        loginUrl: this.talkee.loginUrl,
-      });
+      const editorMask = new EditorMask(this.talkee);
       editorWrapper.appendChild(editorMask.render());
     }
 
     subCommentsContainer.appendChild(editorWrapper);
 
     const subCommentsUl = $e("ul", {
-      className: "talkee-sub-comments-ul",
+      className: this.talkee.classes("sub-comments-ul"),
     });
 
     subCommentsUl.style.display = "none";
@@ -126,7 +138,10 @@ export default class SubComments {
     subCommentsContainer.appendChild(subCommentsUl);
 
     this.loadMoreBtn = $e("button", {
-      className: "talkee-button talkee-sub-load-more-button",
+      className: this.talkee.classes(
+        "button",
+        this.talkee.classes("sub-load-more-button")
+      ),
       innerText: $t("load_more"),
     });
     this.loadMoreBtn.addEventListener("click", () => {
@@ -137,5 +152,5 @@ export default class SubComments {
     this.element = subCommentsContainer;
     this.ul = subCommentsUl;
     return subCommentsContainer;
-  }
+  };
 }

@@ -13,7 +13,7 @@ module.exports = {
     // 输入路径 (the build source directory)
     // 务必使用绝对路径 (must be a absolute path)
     srcDir: path.resolve('src'),
-    
+
     // 输出路径 (the directory for compiled project)
     // 务必使用绝对路径 (must be a absolute path)
     outDir: path.resolve('lib'),
@@ -23,7 +23,7 @@ module.exports = {
     esmDir: path.resolve('es'),
 
     // 打包工具，支持 tsc、rollup (build tool, support tsc and rollup)
-    tool: 'rollup', 
+    tool: 'rollup',
 
     // 构建阶段的自定义配置回调 (The callback will be call in the build-process)
     // 返回自定义的配置 (You can return your custom build configuration)
@@ -49,7 +49,7 @@ module.exports = {
     git: 'git@github.com:links-japan/talkee-ts.git',
 
     // 发布的npm仓库地址 (npm depository url)
-    npm: 'https://registry.npmjs.org/', 
+    npm: 'https://registry.npmjs.org/',
 
     preflight: {
       branch: 'master' // 发布前进行分支检测，设置为空字符串则不会检测 (only can release in this branch, set empty string to ignore this check)

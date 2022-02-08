@@ -19,6 +19,11 @@ const LOGIN_BASE = "";
 module.exports = function (config) {
   const extensions = [".ts", ".js", ".svg"];
 
+  config.forEach(v => {
+    // just keep the third party reference
+    v.external = [/peeler\-js\S*/, 'classnames', 'lodash', 'axios'];
+  });
+
   const defaultPlugins = [
     nodeResolve({
       extensions,
@@ -47,7 +52,7 @@ module.exports = function (config) {
     input: "src/index.ts",
     output: [
       {
-        file: `umd/talkee.min.${pkj.version.replace(/\./g, "-")}.js`,
+        file: `umd/talkee.min.js`,
         format: "umd",
         name: "Talkee",
         exports: "default",

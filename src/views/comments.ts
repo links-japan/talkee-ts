@@ -7,8 +7,11 @@ import Pagination from "./pagination";
 // import "./comments.scss";
 import { IComment } from "../types/api";
 
+/** import types */
+import type Talkee from "../talkee";
+
 export default class Comments {
-  talkee: any;
+  talkee: Talkee;
   comments: any;
 
   element: HTMLElement | Element | null;
@@ -20,7 +23,7 @@ export default class Comments {
   ipp: number;
   total: number;
 
-  constructor(talkee: any, opts: any) {
+  constructor(talkee: Talkee, opts: any) {
     this.talkee = talkee;
     this.comments = [];
 
@@ -37,7 +40,7 @@ export default class Comments {
   async reload(opts: any = {}) {
     const order = opts?.order || this.order;
     const page = opts?.page || this.page;
-    const ret: any = await apis.getComments(order, page);
+    const ret: any = await apis.getComments(order, page, this.talkee.apiBase);
 
     this.ipp = ret.ipp;
     this.page = ret.page;
@@ -62,27 +65,30 @@ export default class Comments {
         this.ul?.append(this.talkee.buildCommentUI(sc, null));
       }
 
-      const pagination = new Pagination(this, {
-        page: this.page,
-        totalPage: Math.ceil(this.total / this.ipp),
-        prev: proc,
-        next: proc,
-        locate: proc,
-      });
-
-      (this.ul as any).append(pagination.render());
+      const { hidePaginationWhenSinglePage } = this.talkee.opts;
+      const totalPage = Math.ceil(this.total / this.ipp);
+      if (!hidePaginationWhenSinglePage || totalPage > 1) {
+        const pagination = new Pagination(this.talkee, {
+          page: this.page,
+          totalPage,
+          prev: proc,
+          next: proc,
+          locate: proc,
+        });
+        (this.ul as any).append(pagination.render());
+      }
     } else {
       this.talkee.components.expansion.expand();
-      (this.ul as any).innerHTML = `<div class="talkee-no-comment-hint">${$t(
-        "no_comment_hint"
-      )}</div>`;
+      (this.ul as any).innerHTML = `<div class=${this.talkee.classes(
+        "no-comment-hint"
+      )}>${$t("no_comment_hint")}</div>`;
     }
     return ret;
   }
 
   async locate(commentId) {
     // fetch the comment, and append it to the top
-    const comment: any = await apis.getComment(commentId);
+    const comment: any = await apis.getComment(commentId, this.talkee.apiBase);
     this.spotlight?.append(this.talkee.buildCommentUI(comment, null));
     this.talkee.container?.scrollIntoView();
   }
@@ -97,20 +103,22 @@ export default class Comments {
 
   expand() {
     // @TODO refactor
-    (this.spotlight?.querySelector(
-      ".talkee-meta-reply-button"
-    ) as any)?.click();
+    (
+      this.spotlight?.querySelector(
+        `.${this.talkee.classes("meta-reply-button")}`
+      ) as any
+    )?.click();
   }
 
   render() {
     const commentsContainer = $e("div", {
-      className: "talkee-comments",
+      className: this.talkee.classes("comments"),
     });
     const commentsUl = $e("div", {
-      className: "talkee-comments-ul",
+      className: this.talkee.classes("comments-ul"),
     });
     const spotlight = $e("div", {
-      className: "talkee-comments-spotlight",
+      className: this.talkee.classes("comments-spotlight"),
     });
 
     this.ul = commentsUl;

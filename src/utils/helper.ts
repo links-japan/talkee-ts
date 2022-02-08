@@ -63,12 +63,12 @@ export const helper = {
     return localStorage.getItem("talkee-redirect-url");
   },
 
-  setRedirect: function () {
+  setRedirect: function (hash?: boolean) {
     // trim the code & state params
     let url = window.location.href
       .replace(/code=[a-z0-9A-Z]+/, "code=")
       .replace(/state=[a-z0-9A-Z]+/, "state=");
-    if (!url.includes("#talkee-")) {
+    if (hash && !url.includes("#talkee-")) {
       url += "#talkee-anchor";
     }
     return localStorage.setItem("talkee-redirect-url", url);

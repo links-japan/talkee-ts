@@ -1,7 +1,7 @@
 name: Deploy to production
 
 env:
-  NODE_ENV: staging
+  NODE_ENV: prod
   API_BASE: https://links-login-api.getlinks.jp/api
   LOGIN_BASE: https://oauth.getlinks.jp
   CLIENT_ID: 3a6c513a-a189-4586-a0f8-cba80ed84de8
@@ -9,7 +9,7 @@ env:
 on:
   push:
     branches:
-      - staging
+      - master
 
 jobs:
   deploy:
